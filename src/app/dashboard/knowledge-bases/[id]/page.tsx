@@ -46,20 +46,26 @@ export default async function KnowledgeBasePage({ params }: KnowledgeBasePagePro
     .from('files')
     .select('*')
     .eq('knowledge_base_id', id)
-    .order('created_at', { ascending: false });
+    .order('uploaded_at', { ascending: false });
+
+  if (filesError) {
+    console.error('Error fetching files:', filesError);
+  }
+
+  console.log('Files fetched:', files?.length || 0, 'files');
 
   return (
-    <div className="container mx-auto p-8">
-      <div className="max-w-5xl mx-auto">
+    <div className="container mx-auto p-4 md:p-6">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold mb-2">{knowledgeBase.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">{knowledgeBase.name}</h1>
               {knowledgeBase.description && (
-                <p className="text-gray-600">{knowledgeBase.description}</p>
+                <p className="text-sm text-gray-600">{knowledgeBase.description}</p>
               )}
-              <div className="mt-4 flex items-center gap-4 text-sm text-gray-500">
+              <div className="mt-3 flex items-center gap-4 text-sm text-gray-500">
                 <span className="flex items-center gap-1">
                   {fileCount} / 10 files
                   <InfoTooltip content="Each knowledge base can hold up to 10 PDF files (10MB each)" />
@@ -92,7 +98,7 @@ export default async function KnowledgeBasePage({ params }: KnowledgeBasePagePro
         </div>
 
         {/* File Upload Area */}
-        <div className="mb-8">
+        <div className="mb-6">
           <FileUploadArea
             knowledgeBaseId={id}
             currentFileCount={fileCount}

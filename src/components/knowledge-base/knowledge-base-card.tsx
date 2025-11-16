@@ -41,19 +41,19 @@ export function KnowledgeBaseCard({ knowledgeBase, onEdit, onDelete }: Knowledge
   return (
     <div className="relative group">
       <Link href={`/dashboard/knowledge-bases/${knowledgeBase.id}`}>
-        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+        <Card className="cursor-pointer">
           <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
-            <CardTitle className="text-xl pr-8">{knowledgeBase.name}</CardTitle>
+            <CardTitle className="pr-8">{knowledgeBase.name}</CardTitle>
             <DropdownMenu>
               <DropdownMenuTrigger
-                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded"
+                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-accent rounded"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                 }}
               >
                 <svg
-                  className="h-5 w-5 text-gray-500"
+                  className="h-5 w-5 text-foreground"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -73,7 +73,7 @@ export function KnowledgeBaseCard({ knowledgeBase, onEdit, onDelete }: Knowledge
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={handleDelete}
-                  className="text-red-600"
+                  className="text-destructive font-bold"
                 >
                   Delete
                 </DropdownMenuItem>
@@ -82,11 +82,11 @@ export function KnowledgeBaseCard({ knowledgeBase, onEdit, onDelete }: Knowledge
           </CardHeader>
           <CardContent>
             {knowledgeBase.description && (
-              <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+              <p className="text-sm text-muted-foreground mb-4 line-clamp-2 font-medium">
                 {knowledgeBase.description}
               </p>
             )}
-            <div className="flex items-center justify-between text-sm text-gray-500">
+            <div className="flex items-center justify-between text-sm text-foreground font-bold uppercase tracking-wide">
               <span>{knowledgeBase.file_count || 0} files</span>
               <span>Updated {updatedAt}</span>
             </div>

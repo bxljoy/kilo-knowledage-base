@@ -18,11 +18,14 @@ export function ChatInput({
   handleSubmit,
   isLoading,
 }: ChatInputProps) {
+  // Ensure input is always a string (default to empty string if undefined)
+  const safeInput = input ?? '';
+
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     // Submit on Enter (without Shift)
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (input.trim() && input.length <= MAX_CHARS && !isLoading) {
+      if (safeInput.trim() && safeInput.length <= MAX_CHARS && !isLoading) {
         // Create a synthetic form event
         const form = e.currentTarget.form;
         if (form) {
@@ -32,19 +35,20 @@ export function ChatInput({
     }
   };
 
-  const charsRemaining = MAX_CHARS - input.length;
-  const isOverLimit = input.length > MAX_CHARS;
-  const canSubmit = input.trim().length > 0 && !isOverLimit && !isLoading;
+  const charsUsed = safeInput.length;
+  const charsRemaining = MAX_CHARS - charsUsed;
+  const isOverLimit = charsUsed > MAX_CHARS;
+  const canSubmit = safeInput.trim().length > 0 && !isOverLimit && !isLoading;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-2">
       <div className="relative">
         <textarea
-          value={input}
+          value={safeInput}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="Ask a question about your documents..."
-          className={`w-full px-4 py-3 pr-24 border rounded-lg resize-none focus:outline-none focus:ring-2 ${
+          className={`w-full px-4 py-3 pr-24 border rounded-lg resize-none focus:outline-none focus:ring-2 text-gray-900 placeholder:text-gray-500 ${
             isOverLimit
               ? 'border-red-300 focus:ring-red-500'
               : 'border-gray-300 focus:ring-blue-500'
@@ -59,7 +63,7 @@ export function ChatInput({
             isOverLimit ? 'text-red-600' : 'text-gray-500'
           }`}
         >
-          {charsRemaining} / {MAX_CHARS}
+          {charsUsed} / {MAX_CHARS}
         </div>
       </div>
 

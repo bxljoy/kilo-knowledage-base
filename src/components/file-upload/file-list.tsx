@@ -31,7 +31,7 @@ export function FileList({ files }: FileListProps) {
 
   const handleDeleteConfirm = async (fileId: string) => {
     setIsDeleting(true);
-    const filename = selectedFile?.filename || 'file';
+    const filename = selectedFile?.file_name || 'file';
 
     try {
       const response = await fetch(`/api/files/${fileId}`, {
@@ -99,7 +99,7 @@ export function FileList({ files }: FileListProps) {
       }
 
       // Filter by search query
-      if (searchQuery && !file.filename.toLowerCase().includes(searchQuery.toLowerCase())) {
+      if (searchQuery && !file.file_name.toLowerCase().includes(searchQuery.toLowerCase())) {
         return false;
       }
 
@@ -108,14 +108,14 @@ export function FileList({ files }: FileListProps) {
     .sort((a, b) => {
       switch (sortBy) {
         case 'name':
-          return a.filename.localeCompare(b.filename);
+          return a.file_name.localeCompare(b.file_name);
         case 'size':
           return (b.file_size || 0) - (a.file_size || 0);
         case 'pages':
           return (b.page_count || 0) - (a.page_count || 0);
         case 'date':
         default:
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          return new Date(b.uploaded_at).getTime() - new Date(a.uploaded_at).getTime();
       }
     });
 
@@ -217,13 +217,13 @@ export function FileList({ files }: FileListProps) {
 
               {/* File Details */}
               <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-gray-900 truncate">{file.filename}</h3>
+                <h3 className="font-medium text-gray-900 truncate">{file.file_name}</h3>
                 <div className="flex items-center gap-3 mt-1 text-sm text-gray-500">
                   <span>{formatFileSize(file.file_size)}</span>
                   <span>•</span>
                   <span>{file.page_count || 0} pages</span>
                   <span>•</span>
-                  <span>{formatDate(file.created_at)}</span>
+                  <span>{formatDate(file.uploaded_at)}</span>
                 </div>
               </div>
 

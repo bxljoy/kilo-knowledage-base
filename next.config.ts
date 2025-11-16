@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   async headers() {
-    return [
+    const headerConfigs = [
       {
         source: '/:path*',
         headers: [
@@ -52,17 +52,22 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      {
-        // HSTS for production (only if using HTTPS)
+    ];
+
+    // Add HSTS only in production
+    if (process.env.NODE_ENV === 'production') {
+      headerConfigs.push({
         source: '/:path*',
-        headers: process.env.NODE_ENV === 'production' ? [
+        headers: [
           {
             key: 'Strict-Transport-Security',
             value: 'max-age=31536000; includeSubDomains',
           },
-        ] : [],
-      },
-    ];
+        ],
+      });
+    }
+
+    return headerConfigs;
   },
 };
 

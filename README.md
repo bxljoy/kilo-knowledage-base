@@ -41,8 +41,10 @@ cd kilo-knowledage-base
 2. **Install dependencies**
 
 ```bash
-npm install
+npm install --legacy-peer-deps
 ```
+
+> **Note:** We use `--legacy-peer-deps` because `react-joyride` (used for the welcome tour) doesn't yet support React 19. The library works fine despite the peer dependency warning.
 
 3. **Set up environment variables**
 
@@ -61,7 +63,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 # Google Gemini API (from https://aistudio.google.com/app/apikey)
-GEMINI_API_KEY=your-gemini-api-key
+# Both variables should use the same API key:
+GEMINI_API_KEY=your-gemini-api-key  # For file upload/management
+GOOGLE_GENERATIVE_AI_API_KEY=your-gemini-api-key  # Required by Vercel AI SDK for chat
 
 # Google OAuth (from https://console.cloud.google.com/apis/credentials)
 GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com

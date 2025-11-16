@@ -14,7 +14,29 @@ interface FileUploadAreaProps {
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_FILE_TYPES = {
+  // Documents
   'application/pdf': ['.pdf'],
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+  'application/msword': ['.doc'],
+  'text/plain': ['.txt'],
+  'application/json': ['.json'],
+  'text/markdown': ['.md'],
+  'text/csv': ['.csv'],
+  // Programming languages
+  'text/javascript': ['.js'],
+  'application/javascript': ['.jsx'],
+  'text/x-python': ['.py'],
+  'text/x-java': ['.java'],
+  'text/x-c': ['.c'],
+  'text/x-c++': ['.cpp'],
+  'text/x-csharp': ['.cs'],
+  'text/x-go': ['.go'],
+  'text/x-rust': ['.rs'],
+  'text/x-typescript': ['.ts', '.tsx'],
+  'text/html': ['.html'],
+  'text/css': ['.css'],
+  'application/xml': ['.xml'],
+  'text/xml': ['.xml'],
 };
 
 interface UploadingFile {
@@ -263,10 +285,10 @@ export function FileUploadArea({
                     ? isDragReject
                       ? 'Invalid file type'
                       : 'Drop files here'
-                    : 'Drag and drop PDF files here'}
+                    : 'Drag and drop your files here'}
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
-                  or click to browse files
+                  or click to browse (PDF, Word, Text, Code files, etc.)
                 </p>
               </>
             )}
@@ -275,9 +297,8 @@ export function FileUploadArea({
           {/* Restrictions */}
           {!isDisabled && (
             <div className="text-xs text-gray-500 space-y-1">
-              <p>• PDF files only</p>
+              <p>• Supported: PDF, Word (.docx), Text (.txt, .md), JSON, CSV, and code files (.js, .py, .java, etc.)</p>
               <p>• Maximum file size: 10MB</p>
-              <p>• Maximum pages: 200 per PDF</p>
               <p>• Maximum {maxFiles} files per knowledge base</p>
             </div>
           )}

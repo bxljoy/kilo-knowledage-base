@@ -139,10 +139,10 @@ export function KnowledgeBaseGrid({ initialKnowledgeBases, userId }: KnowledgeBa
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Your Knowledge Bases</h2>
-          <p className="text-gray-600 flex items-center gap-2">
+          <div className="text-gray-600 flex items-center gap-2">
             {initialKnowledgeBases.length} / 5 knowledge bases
             <InfoTooltip content="You can create up to 5 knowledge bases to organize different sets of documents" />
-          </p>
+          </div>
         </div>
         <Button
           onClick={() => setIsCreateDialogOpen(true)}

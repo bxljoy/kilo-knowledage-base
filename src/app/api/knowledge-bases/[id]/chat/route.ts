@@ -101,16 +101,26 @@ export async function POST(
       );
     }
 
+    // Convert messages to model format (extract content from parts array for assistant messages)
+    const modelMessages = messages.map((m: any) => {
+      if (m.role === 'assistant' && m.parts) {
+        // Extract text from parts array
+        const content = m.parts
+          .filter((part: any) => part.type === 'text')
+          .map((part: any) => part.text)
+          .join('');
+        return { role: 'assistant', content };
+      }
+      return { role: m.role, content: m.content };
+    });
+
     // Stream the response using Vercel AI SDK
     const result = await streamText({
-      model: google('gemini-2.0-flash', {
+      model: google('gemini-2.5-flash', {
         // Use File Search with the knowledge base's FileSearchStore
         fileSearchStore: kb.gemini_store_id || undefined,
       }),
-      messages: messages.map((m: any) => ({
-        role: m.role,
-        content: m.content,
-      })),
+      messages: modelMessages,
       system: `You are a helpful AI assistant that answers questions based on the uploaded documents in the knowledge base "${kb.name}".
 
 Instructions:
@@ -132,13 +142,14 @@ Instructions:
 
     // Add rate limit headers to response
     const updatedRateLimit = checkRateLimit(user.id);
-    const response = result.toDataStreamResponse();
 
-    response.headers.set('X-RateLimit-Limit', updatedRateLimit.limit.toString());
-    response.headers.set('X-RateLimit-Remaining', updatedRateLimit.remaining.toString());
-    response.headers.set('X-RateLimit-Reset', updatedRateLimit.resetDate.toISOString());
-
-    return response;
+    return result.toTextStreamResponse({
+      headers: {
+        'X-RateLimit-Limit': updatedRateLimit.limit.toString(),
+        'X-RateLimit-Remaining': updatedRateLimit.remaining.toString(),
+        'X-RateLimit-Reset': updatedRateLimit.resetDate.toISOString(),
+      },
+    });
   } catch (error) {
     console.error('Error in POST /api/knowledge-bases/[id]/chat:', error);
     return NextResponse.json(

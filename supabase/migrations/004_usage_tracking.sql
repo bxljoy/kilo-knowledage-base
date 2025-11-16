@@ -150,13 +150,3 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Add usage analytics to chat messages (for business metrics)
-ALTER TABLE chat_messages
-ADD COLUMN IF NOT EXISTS response_time_ms INT,
-ADD COLUMN IF NOT EXISTS token_count INT,
-ADD COLUMN IF NOT EXISTS error_occurred BOOLEAN DEFAULT FALSE;
-
--- Create index for analytics queries
-CREATE INDEX IF NOT EXISTS idx_chat_messages_created_at ON chat_messages(created_at);
-CREATE INDEX IF NOT EXISTS idx_chat_messages_knowledge_base_id_created_at
-  ON chat_messages(knowledge_base_id, created_at);

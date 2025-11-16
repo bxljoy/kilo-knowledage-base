@@ -10,10 +10,17 @@ interface WelcomeTourProps {
 
 export function WelcomeTour({ onComplete, run = false }: WelcomeTourProps) {
   const [runTour, setRunTour] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setRunTour(run);
-  }, [run]);
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      setRunTour(run);
+    }
+  }, [run, isMounted]);
 
   const steps: Step[] = [
     {
@@ -88,6 +95,11 @@ export function WelcomeTour({ onComplete, run = false }: WelcomeTourProps) {
       onComplete?.();
     }
   };
+
+  // Only render on client to avoid hydration errors
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <Joyride

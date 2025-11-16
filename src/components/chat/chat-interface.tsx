@@ -1,6 +1,8 @@
 'use client';
 
-import { useChat } from 'ai/react';
+import { useState } from 'react';
+import { useChat } from '@ai-sdk/react';
+import { TextStreamChatTransport } from 'ai';
 import { ChatInput } from './chat-input';
 import { ChatMessages } from './chat-messages';
 import { EmptyChatState } from './empty-chat-state';
@@ -16,19 +18,36 @@ export function ChatInterface({
   knowledgeBaseName,
   fileCount,
 }: ChatInterfaceProps) {
-  const { messages, input, handleInputChange, handleSubmit, isLoading, error, reload } =
-    useChat({
+  const [input, setInput] = useState('');
+
+  const { messages, sendMessage, status, error } = useChat({
+    transport: new TextStreamChatTransport({
       api: `/api/knowledge-bases/${knowledgeBaseId}/chat`,
-      onError: (error) => {
-        console.error('Chat error:', error);
-      },
+    }),
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const messageContent = input;
+    setInput(''); // Clear input immediately
+
+    await sendMessage({
+      role: 'user',
+      content: messageContent,
     });
+  };
 
   const handleRetry = () => {
-    if (reload) {
-      reload();
-    }
+    // TODO: Implement retry logic if needed
   };
+
+  const isLoading = status === 'in_progress';
 
   // Show empty state if no files uploaded
   if (fileCount === 0) {

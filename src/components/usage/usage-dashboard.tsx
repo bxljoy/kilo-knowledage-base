@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { formatBytes, calculatePercentage } from '@/lib/usage-tracking';
+import { formatBytes, calculatePercentage } from '@/lib/usage-utils';
 
 interface UsageData {
   queries: {

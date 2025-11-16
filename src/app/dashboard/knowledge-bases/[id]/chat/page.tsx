@@ -40,9 +40,9 @@ export default async function ChatPage({ params }: ChatPageProps) {
   const fileCount = knowledgeBase.files?.[0]?.count || 0;
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-[calc(100vh-4rem)] flex flex-col">
       {/* Header */}
-      <div className="border-b bg-white">
+      <div className="border-b bg-white flex-shrink-0">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -65,7 +65,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-xl font-bold">{knowledgeBase.name}</h1>
+                <h1 className="text-xl font-bold text-gray-900">{knowledgeBase.name}</h1>
                 <p className="text-sm text-gray-600">
                   {fileCount} file{fileCount !== 1 ? 's' : ''} • Chat
                 </p>

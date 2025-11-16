@@ -16,7 +16,37 @@ const genAI = new GoogleGenAI({
 export const FILE_LIMITS = {
   MAX_SIZE: 10 * 1024 * 1024, // 10MB in bytes
   MAX_PAGES: 200,
-  ALLOWED_MIME_TYPES: ['application/pdf'],
+  ALLOWED_MIME_TYPES: [
+    // Documents
+    'application/pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+    'application/msword', // .doc
+    'text/plain', // .txt
+    'application/json', // .json
+    'text/markdown', // .md
+    'text/csv', // .csv
+
+    // Programming languages
+    'text/javascript',
+    'application/javascript',
+    'text/x-python',
+    'text/x-java',
+    'text/x-c',
+    'text/x-c++',
+    'text/x-csharp',
+    'text/x-go',
+    'text/x-rust',
+    'text/x-typescript',
+    'text/html',
+    'text/css',
+    'application/xml',
+    'text/xml',
+  ],
+  ALLOWED_EXTENSIONS: [
+    '.pdf', '.docx', '.doc', '.txt', '.json', '.md', '.csv',
+    '.js', '.jsx', '.ts', '.tsx', '.py', '.java', '.c', '.cpp',
+    '.cs', '.go', '.rs', '.html', '.css', '.xml',
+  ],
   MAX_FILES_PER_KB: 10,
 } as const;
 
@@ -24,11 +54,17 @@ export const FILE_LIMITS = {
  * Validate file before upload
  */
 export async function validateFile(file: File): Promise<{ valid: boolean; error?: string }> {
-  // Check file type
-  if (!(FILE_LIMITS.ALLOWED_MIME_TYPES as readonly string[]).includes(file.type)) {
+  // Check file type by MIME type
+  const isMimeTypeAllowed = (FILE_LIMITS.ALLOWED_MIME_TYPES as readonly string[]).includes(file.type);
+
+  // Check file extension as fallback (some browsers don't set correct MIME types)
+  const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+  const isExtensionAllowed = (FILE_LIMITS.ALLOWED_EXTENSIONS as readonly string[]).includes(fileExtension);
+
+  if (!isMimeTypeAllowed && !isExtensionAllowed) {
     return {
       valid: false,
-      error: 'Only PDF files are allowed',
+      error: 'Unsupported file type. Allowed formats: PDF, Word (.docx), Text (.txt, .md), JSON, CSV, and common programming files (.js, .py, .java, etc.)',
     };
   }
 
@@ -39,9 +75,6 @@ export async function validateFile(file: File): Promise<{ valid: boolean; error?
       error: `File size must be less than ${FILE_LIMITS.MAX_SIZE / 1024 / 1024}MB`,
     };
   }
-
-  // TODO: Add PDF page count validation using a PDF parser library
-  // For now, we'll validate this server-side after upload
 
   return { valid: true };
 }
@@ -194,16 +227,16 @@ export async function withRetry<T>(
  */
 export async function createFileSearchStore(displayName: string): Promise<{ storeId: string }> {
   try {
-    const store = await genAI.beta.createFileSearchStore({
-      displayName,
+    const createStoreOp = await genAI.fileSearchStores.create({
+      config: { displayName },
     });
 
-    if (!store.name) {
+    if (!createStoreOp.name) {
       throw new Error('Failed to create FileSearchStore: missing store name');
     }
 
     return {
-      storeId: store.name,
+      storeId: createStoreOp.name,
     };
   } catch (error) {
     console.error('Error creating FileSearchStore:', error);
@@ -216,7 +249,10 @@ export async function createFileSearchStore(displayName: string): Promise<{ stor
  */
 export async function deleteFileSearchStore(storeId: string): Promise<void> {
   try {
-    await genAI.beta.deleteFileSearchStore({ name: storeId });
+    await genAI.fileSearchStores.delete({
+      name: storeId,
+      config: { force: true },
+    });
   } catch (error) {
     console.error('Error deleting FileSearchStore:', error);
     throw error;
@@ -224,31 +260,69 @@ export async function deleteFileSearchStore(storeId: string): Promise<void> {
 }
 
 /**
- * Add file to FileSearchStore
+ * Upload file directly to FileSearchStore (recommended approach)
+ * This is the correct way to add files to a FileSearchStore
  */
-export async function addFileToStore(storeId: string, fileId: string): Promise<void> {
+export async function uploadToFileSearchStore(
+  file: File,
+  storeId: string,
+  displayName: string
+): Promise<{ documentId: string; operationName: string }> {
   try {
-    await genAI.beta.batchUpdateFiles({
-      files: [{ name: fileId }],
-      updateMask: { paths: ['fileSearchStore'] },
-      fileSearchStore: storeId,
+    // Upload file directly to the FileSearchStore
+    let operation = await genAI.fileSearchStores.uploadToFileSearchStore({
+      fileSearchStoreName: storeId,
+      file: file,
+      config: {
+        displayName: displayName,
+      },
     });
+
+    // Wait for upload operation to complete
+    while (!operation.done) {
+      console.log('Uploading to FileSearchStore...');
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
+      operation = await genAI.operations.get({ operation: operation });
+    }
+
+    if (operation.error) {
+      throw new Error(`File upload to store failed: ${operation.error.message}`);
+    }
+
+    // Get the document ID from the operation response
+    const documentId = operation.response?.name || '';
+
+    return {
+      documentId,
+      operationName: operation.name || '',
+    };
   } catch (error) {
-    console.error('Error adding file to store:', error);
+    console.error('Error uploading file to FileSearchStore:', error);
     throw error;
   }
 }
 
 /**
+ * Add file to FileSearchStore (deprecated - use uploadToFileSearchStore instead)
+ * @deprecated Use uploadToFileSearchStore for new uploads
+ */
+export async function addFileToStore(storeId: string, fileId: string): Promise<void> {
+  console.warn('addFileToStore is deprecated. Files are not being added to the FileSearchStore.');
+  console.warn('Use uploadToFileSearchStore instead for new file uploads.');
+}
+
+/**
  * Remove file from FileSearchStore
+ * TODO: Update to use new API
  */
 export async function removeFileFromStore(storeId: string, fileId: string): Promise<void> {
   try {
-    await genAI.beta.batchUpdateFiles({
-      files: [{ name: fileId }],
-      updateMask: { paths: ['fileSearchStore'] },
-      fileSearchStore: null,
-    });
+    // Temporary stub - the new API removes documents using:
+    // await genAI.fileSearchStores.documents.delete({
+    //   name: documentName,
+    //   config: { force: true }
+    // });
+    console.warn('removeFileFromStore: Using legacy flow - needs to be updated for new API');
   } catch (error) {
     console.error('Error removing file from store:', error);
     throw error;

@@ -24,9 +24,9 @@ export function ChatMessages({ messages, isLoading, error, knowledgeBaseId, onRe
   if (messages.length === 0 && !isLoading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <div className="text-center max-w-md px-4">
+        <div className="text-center max-w-sm px-4">
           <svg
-            className="w-16 h-16 mx-auto text-gray-400 mb-4"
+            className="w-12 h-12 mx-auto text-gray-400 mb-3"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -38,10 +38,10 @@ export function ChatMessages({ messages, isLoading, error, knowledgeBaseId, onRe
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
             />
           </svg>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-base font-medium text-gray-900 mb-1">
             Start a conversation
           </h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-xs text-gray-600">
             Ask questions about your uploaded documents. I'll provide answers based on the content you've uploaded.
           </p>
         </div>
@@ -52,19 +52,26 @@ export function ChatMessages({ messages, isLoading, error, knowledgeBaseId, onRe
   return (
     <div className="h-full overflow-y-auto">
       <div className="container mx-auto px-4 py-8 max-w-3xl space-y-6">
-        {messages.map((message) => (
-          <div key={message.id}>
-            {message.role === 'user' ? (
-              <UserMessage content={message.content} />
-            ) : (
-              <AIMessage
-                content={message.content}
-                messageId={message.id}
-                knowledgeBaseId={knowledgeBaseId}
-              />
-            )}
-          </div>
-        ))}
+        {messages.map((message) => {
+          // Extract content from message (AI SDK v5.x uses parts array for assistant messages)
+          const content = message.role === 'assistant' && 'parts' in message
+            ? message.parts.map((part: any) => part.type === 'text' ? part.text : '').join('')
+            : message.content;
+
+          return (
+            <div key={message.id}>
+              {message.role === 'user' ? (
+                <UserMessage content={content} />
+              ) : (
+                <AIMessage
+                  content={content}
+                  messageId={message.id}
+                  knowledgeBaseId={knowledgeBaseId}
+                />
+              )}
+            </div>
+          );
+        })}
 
         {/* Loading indicator */}
         {isLoading && messages[messages.length - 1]?.role === 'user' && (

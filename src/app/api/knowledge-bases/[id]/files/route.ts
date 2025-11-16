@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { uploadFileToGemini, addFileToStore, FILE_LIMITS } from '@/lib/gemini';
+import { uploadToFileSearchStore, FILE_LIMITS, validateFile } from '@/lib/gemini';
 import { PDFDocument } from 'pdf-lib';
 import {
   checkFileUploadQuota,
@@ -53,10 +53,11 @@ export async function POST(
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Validate file type
-    if (!FILE_LIMITS.ALLOWED_MIME_TYPES.includes(file.type as any)) {
+    // Validate file type using the validation function from gemini.ts
+    const validation = await validateFile(file);
+    if (!validation.valid) {
       return NextResponse.json(
-        { error: 'Only PDF files are allowed' },
+        { error: validation.error },
         { status: 400 }
       );
     }
@@ -102,41 +103,59 @@ export async function POST(
       );
     }
 
-    // Validate PDF page count
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdfDoc = await PDFDocument.load(arrayBuffer);
-      const pageCount = pdfDoc.getPageCount();
+    // Validate PDF page count (only for PDF files)
+    let pageCount = null;
+    const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
 
-      if (pageCount > FILE_LIMITS.MAX_PAGES) {
+    if (isPDF) {
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdfDoc = await PDFDocument.load(arrayBuffer);
+        pageCount = pdfDoc.getPageCount();
+
+        if (pageCount > FILE_LIMITS.MAX_PAGES) {
+          return NextResponse.json(
+            {
+              error: `PDF must have ${FILE_LIMITS.MAX_PAGES} pages or less (found ${pageCount} pages)`,
+            },
+            { status: 400 }
+          );
+        }
+      } catch (pdfError) {
+        console.error('Error processing PDF:', pdfError);
         return NextResponse.json(
-          {
-            error: `PDF must have ${FILE_LIMITS.MAX_PAGES} pages or less (found ${pageCount} pages)`,
-          },
+          { error: 'Failed to process PDF file. File may be corrupted or invalid.' },
           { status: 400 }
         );
       }
+    }
 
-      // Upload file to Gemini
-      const { fileId, uri, state } = await uploadFileToGemini(file, file.name);
-
-      // Add file to the knowledge base's FileSearchStore
-      if (kb.gemini_store_id) {
-        await addFileToStore(kb.gemini_store_id, fileId);
+    // Upload file directly to FileSearchStore
+    try {
+      if (!kb.gemini_store_id) {
+        return NextResponse.json(
+          { error: 'Knowledge base does not have a FileSearchStore configured' },
+          { status: 500 }
+        );
       }
+
+      // Upload file directly to the FileSearchStore
+      const { documentId, operationName } = await uploadToFileSearchStore(
+        file,
+        kb.gemini_store_id,
+        file.name
+      );
 
       // Save file metadata to database
       const { data: savedFile, error: dbError } = await supabase
         .from('files')
         .insert({
           knowledge_base_id: knowledgeBaseId,
-          filename: file.name,
+          file_name: file.name,
           file_size: file.size,
-          mime_type: file.type,
           page_count: pageCount,
-          gemini_file_id: fileId,
-          gemini_uri: uri,
-          status: state.toLowerCase(),
+          gemini_file_id: documentId,  // Store the document ID from FileSearchStore
+          status: 'ready',  // File is ready once uploadToFileSearchStore completes
         })
         .select()
         .single();
@@ -157,10 +176,10 @@ export async function POST(
       ]);
 
       return NextResponse.json(savedFile, { status: 201 });
-    } catch (pdfError) {
-      console.error('Error processing PDF:', pdfError);
+    } catch (uploadError) {
+      console.error('Error uploading file:', uploadError);
       return NextResponse.json(
-        { error: 'Failed to process PDF file. File may be corrupted or invalid.' },
+        { error: 'Failed to upload file. File may be corrupted or unsupported.' },
         { status: 400 }
       );
     }
