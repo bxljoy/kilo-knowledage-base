@@ -1,0 +1,482 @@
+================================================================================
+PRODUCT REQUIREMENTS DOCUMENT
+Kilo - AI-Powered Knowledge Base SaaS (MVP)
+================================================================================
+
+Author: Alex
+Date: November 16, 2025
+Status: Final Draft for Implementation
+Version: 2.0
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+Kilo is a multi-tenant SaaS platform that enables users to upload their private 
+documents (PDFs) and interact with them through an AI-powered chat interface. 
+By leveraging Google's Gemini File Search API, Kilo eliminates the complexity 
+of building custom RAG pipelines while providing accurate, document-grounded 
+responses.
+
+Key Value Proposition: "Your documents, your knowledge, zero complexity."
+
+================================================================================
+1. PROBLEM STATEMENT
+================================================================================
+
+Current Challenges:
+- Organizations have vast amounts of unstructured private data in PDFs
+- Building RAG pipelines requires significant engineering resources
+- Existing solutions are either too complex (self-hosted) or too generic (ChatGPT)
+- Vector databases, embeddings, and chunking strategies require deep expertise
+- Maintenance and scaling of custom RAG solutions is expensive
+
+Our Solution:
+- One-click document upload and instant AI chat interface
+- No technical knowledge required
+- Secure, multi-tenant architecture
+- Answers grounded exclusively in user's uploaded documents
+- Built on Google's enterprise-grade File Search API
+
+================================================================================
+2. PRODUCT OBJECTIVES & SUCCESS CRITERIA
+================================================================================
+
+PRIMARY OBJECTIVES:
+1. Validate market demand for simplified RAG-as-a-Service
+2. Prove technical architecture scalability
+3. Establish product-market fit signals
+
+SUCCESS METRICS:
+- Acquisition: 500 user sign-ups within 30 days
+- Activation: 40% of users upload at least one file and ask one question
+- Engagement: 25% weekly active users (WAU/MAU)
+- Quality: 80% positive response rating (thumbs up)
+- Performance: <2 second average response time
+- Retention: 30% Week 1 retention rate
+- Cost Efficiency: <$0.10 API cost per active user/day
+
+================================================================================
+3. TARGET AUDIENCE (MVP)
+================================================================================
+
+PRIMARY PERSONAS:
+
+1. The Knowledge Worker
+   - Role: Consultant, Analyst, Researcher
+   - Use Case: Query research papers, reports, documentation
+   - Pain Point: Information scattered across hundreds of PDFs
+   - Example: Financial advisor searching client documents
+
+2. The Small Team Lead
+   - Role: Manager, Team Lead, Coordinator
+   - Use Case: Create searchable knowledge base for team
+   - Pain Point: Team asks same questions repeatedly
+   - Example: Support manager with product documentation
+
+3. The Academic/Student
+   - Role: PhD Student, Professor, Researcher
+   - Use Case: Literature review, research synthesis
+   - Pain Point: Remembering where specific information was read
+   - Example: PhD student with 200+ research papers
+
+================================================================================
+4. COMPETITIVE ANALYSIS
+================================================================================
+
+Direct Competitors:
+- ChatPDF: Single PDF focus, no knowledge base concept
+- Claude Projects: General purpose, not specialized for document Q&A
+- CustomGPTs: Requires ChatGPT Plus, limited file handling
+- Mendeley/Zotero: Academic focus, no AI chat
+
+Our Differentiation:
+1. Multi-knowledge-base organization (not just one pile of files)
+2. Responses grounded ONLY in uploaded documents (no hallucination)
+3. Simple, focused UX (not trying to be everything)
+4. Transparent pricing (clear limits, no surprises)
+5. Privacy-first approach (your data stays yours)
+
+================================================================================
+5. FEATURE REQUIREMENTS & USER STORIES
+================================================================================
+
+EPIC 1: AUTHENTICATION & USER MANAGEMENT
+----------------------------------------
+Story 1.1: As a new user, I can sign up instantly using Google OAuth
+Story 1.2: As a user, I can sign in with my Google account
+Story 1.3: As a user, I can sign out securely
+Story 1.4: As a user, I can view my account settings and usage
+
+EPIC 2: KNOWLEDGE BASE MANAGEMENT
+----------------------------------
+Story 2.1: As a user, I can create named knowledge bases (max 5 for MVP)
+Story 2.2: As a user, I can view all my knowledge bases with file counts
+Story 2.3: As a user, I can rename a knowledge base
+Story 2.4: As a user, I can delete a knowledge base (with confirmation)
+Story 2.5: As a user, I can see storage usage per knowledge base
+
+EPIC 3: DOCUMENT MANAGEMENT
+----------------------------
+Story 3.1: As a user, I can upload PDFs to a knowledge base (max 10 files, 10MB each)
+Story 3.2: As a user, I can see upload progress with real-time status
+Story 3.3: As a user, I see file processing states (Uploading/Processing/Ready/Failed)
+Story 3.4: As a user, I can view file metadata (name, size, upload date, page count)
+Story 3.5: As a user, I receive clear error messages for invalid files
+Story 3.6: As a user, I can delete individual files from a knowledge base
+
+EPIC 4: AI CHAT INTERFACE
+--------------------------
+Story 4.1: As a user, I can enter a dedicated chat view for each knowledge base
+Story 4.2: As a user, I can type natural language questions
+Story 4.3: As a user, I see responses stream in real-time
+Story 4.4: As a user, responses are grounded ONLY in my uploaded documents
+Story 4.5: As a user, I can see chat history for current session
+Story 4.6: As a user, I can rate responses (thumbs up/down)
+Story 4.7: As a user, I can copy responses to clipboard
+Story 4.8: As a user, I see helpful error messages when queries fail
+
+EPIC 5: ONBOARDING & HELP
+--------------------------
+Story 5.1: As a new user, I see a welcome tour on first login
+Story 5.2: As a new user, I can explore a demo knowledge base with sample PDFs
+Story 5.3: As a user, I can access help documentation
+Story 5.4: As a user, I see helpful empty states with clear CTAs
+
+================================================================================
+6. TECHNICAL ARCHITECTURE
+================================================================================
+
+STACK:
+- Framework: Next.js 14+ (App Router)
+- Database: Supabase (PostgreSQL + Auth)
+- AI Engine: Google Gemini API (File Search)
+- Chat UI: Vercel AI SDK
+- Styling: Tailwind CSS + shadcn/ui
+- Hosting: Vercel
+- Monitoring: Vercel Analytics + Sentry
+
+SECURITY:
+- Authentication: OAuth 2.0 (Google) via Supabase Auth
+- Authorization: Supabase Row Level Security (RLS)
+- API Security: Next.js API routes with auth middleware
+- File Upload: Direct streaming to Gemini (no local storage)
+- HTTPS everywhere
+
+DATABASE SCHEMA:
+```sql
+-- Users table (managed by Supabase Auth)
+
+-- Knowledge Bases
+CREATE TABLE knowledge_bases (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  gemini_store_id VARCHAR(255) UNIQUE NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+  file_count INTEGER DEFAULT 0,
+  total_size_bytes BIGINT DEFAULT 0
+);
+
+-- Files
+CREATE TABLE files (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  knowledge_base_id UUID REFERENCES knowledge_bases(id) ON DELETE CASCADE,
+  gemini_file_name VARCHAR(255) NOT NULL,
+  original_name VARCHAR(255) NOT NULL,
+  size_bytes BIGINT NOT NULL,
+  status VARCHAR(50) DEFAULT 'uploading', -- uploading|processing|ready|failed
+  error_message TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Chat Sessions
+CREATE TABLE chat_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  knowledge_base_id UUID REFERENCES knowledge_bases(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  last_message_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Chat Messages (for analytics, not for chat history display)
+CREATE TABLE chat_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  session_id UUID REFERENCES chat_sessions(id) ON DELETE CASCADE,
+  role VARCHAR(50) NOT NULL, -- user|assistant
+  content TEXT NOT NULL,
+  rating INTEGER, -- 1 (thumbs up) or -1 (thumbs down)
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Enable RLS
+ALTER TABLE knowledge_bases ENABLE ROW LEVEL SECURITY;
+ALTER TABLE files ENABLE ROW LEVEL SECURITY;
+ALTER TABLE chat_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE chat_messages ENABLE ROW LEVEL SECURITY;
+```
+
+API ROUTES:
+```
+POST   /api/auth/login
+POST   /api/auth/logout
+GET    /api/auth/session
+
+GET    /api/knowledge-bases
+POST   /api/knowledge-bases
+PATCH  /api/knowledge-bases/[id]
+DELETE /api/knowledge-bases/[id]
+
+POST   /api/knowledge-bases/[id]/files
+GET    /api/knowledge-bases/[id]/files
+DELETE /api/files/[id]
+
+POST   /api/knowledge-bases/[id]/chat
+POST   /api/chat/[messageId]/rate
+```
+
+================================================================================
+7. CONSTRAINTS & LIMITATIONS (MVP)
+================================================================================
+
+TECHNICAL LIMITS:
+- Max 5 knowledge bases per user
+- Max 10 files per knowledge base
+- Max 10MB per PDF file
+- Max 100 queries per day per user
+- Max 200 pages per PDF
+- Chat history limited to current session only
+
+SUPPORTED:
+- File Type: PDF only
+- Auth Provider: Google only
+- Language: English only
+- Browser: Chrome, Firefox, Safari (latest 2 versions)
+
+NOT SUPPORTED (MVP):
+- Team/organization accounts
+- Sharing knowledge bases
+- Mobile apps
+- File versioning
+- Persistent chat history
+- Export functionality
+- Custom AI models
+- API access
+- Billing/payments
+
+================================================================================
+8. DATA PRIVACY & COMPLIANCE
+================================================================================
+
+PRIVACY COMMITMENTS:
+- User files are never stored on our servers
+- Files are streamed directly to Google's secure infrastructure
+- Each user's data is isolated via Gemini FileSearchStore
+- No training on user data
+- Users can delete all data at any time
+
+COMPLIANCE CONSIDERATIONS:
+- GDPR: Right to deletion implemented
+- CCPA: Data portability planned for v2
+- SOC2: Security practices documented
+- Data Residency: US-only for MVP
+
+DATA RETENTION:
+- Files in Gemini: Deleted within 24 hours of knowledge base deletion
+- Database records: Soft delete with 30-day retention
+- Chat logs: 90-day retention for analytics
+
+================================================================================
+9. ERROR HANDLING & EDGE CASES
+================================================================================
+
+FILE UPLOAD ERRORS:
+- Corrupted PDF → "File appears to be corrupted. Please try another file."
+- Password-protected → "Password-protected PDFs are not supported."
+- Too large → "File exceeds 10MB limit. Please use a smaller file."
+- Wrong format → "Only PDF files are currently supported."
+- Network failure → "Upload failed. Please check your connection and try again."
+
+GEMINI API ERRORS:
+- Rate limit → "You've reached your daily query limit. Please try again tomorrow."
+- Store not found → "Knowledge base configuration error. Please contact support."
+- Timeout → "Response took too long. Please try a simpler question."
+- No relevant content → "No relevant information found in your documents for this query."
+
+USER ERRORS:
+- No files in KB → "Please upload at least one PDF before asking questions."
+- Empty query → "Please enter a question."
+- Query too long → "Please keep your question under 500 characters."
+
+================================================================================
+10. IMPLEMENTATION PRIORITIES
+================================================================================
+
+PHASE 1 - CORE (Week 1):
+1. Next.js project setup with TypeScript
+2. Supabase integration (Auth + Database)
+3. Google OAuth implementation
+4. Basic knowledge base CRUD
+5. File upload to Gemini FileSearchStore
+
+PHASE 2 - CHAT (Week 2):
+1. Vercel AI SDK integration
+2. Chat UI with streaming responses
+3. Gemini File Search query implementation
+4. Error handling for all edge cases
+5. Basic styling with Tailwind + shadcn/ui
+
+PHASE 3 - POLISH (Week 3):
+1. Onboarding flow and demo content
+2. File management (delete, status updates)
+3. Response rating system
+4. Usage analytics
+5. Performance optimization
+
+PHASE 4 - LAUNCH (Week 4):
+1. Production deployment
+2. Monitoring setup (Sentry, Analytics)
+3. Documentation
+4. Landing page
+5. Beta user onboarding
+
+================================================================================
+11. MONITORING & ANALYTICS
+================================================================================
+
+KEY METRICS TO TRACK:
+- User signups per day
+- Files uploaded per user
+- Queries per user per day
+- Response time (p50, p95, p99)
+- Error rates by type
+- User retention cohorts
+- Feature adoption rates
+
+TOOLS:
+- Vercel Analytics: Page views, user flows
+- Sentry: Error tracking and performance
+- Supabase Dashboard: Database metrics
+- Custom dashboard: Business metrics
+
+================================================================================
+12. FUTURE ENHANCEMENTS (POST-MVP)
+================================================================================
+
+QUARTER 2:
+- Support for DOCX, TXT, MD files
+- Persistent chat history
+- Export chat conversations
+- Advanced file management
+- Usage-based billing
+
+QUARTER 3:
+- Team accounts with sharing
+- Custom AI model selection
+- API access for developers
+- Mobile applications
+- Batch file upload
+
+QUARTER 4:
+- Enterprise features (SSO, audit logs)
+- On-premise deployment option
+- Advanced analytics dashboard
+- AI-powered document summaries
+- Cross-knowledge-base search
+
+================================================================================
+13. DEVELOPMENT GUIDELINES FOR CLAUDE CODE
+================================================================================
+
+PROJECT STRUCTURE:
+```
+/app
+  /(auth)
+    /login
+    /signup
+  /(dashboard)
+    /dashboard
+    /kb/[id]
+    /kb/[id]/chat
+  /api
+    /auth
+    /knowledge-bases
+    /chat
+/components
+  /ui (shadcn components)
+  /chat
+  /knowledge-base
+  /file-upload
+/lib
+  /supabase
+  /gemini
+  /auth
+/types
+/hooks
+```
+
+CODING STANDARDS:
+- TypeScript strict mode enabled
+- Error boundaries on all pages
+- Loading states for all async operations
+- Optimistic UI updates where appropriate
+- Accessible (WCAG 2.1 AA compliant)
+- Mobile-responsive design
+
+ENVIRONMENT VARIABLES:
+```
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+GEMINI_API_KEY=
+NEXT_PUBLIC_APP_URL=
+```
+
+TESTING REQUIREMENTS:
+- Unit tests for utility functions
+- Integration tests for API routes
+- E2E tests for critical user paths
+- Load testing before launch
+
+================================================================================
+14. LAUNCH CHECKLIST
+================================================================================
+
+PRE-LAUNCH:
+□ Security audit completed
+□ Rate limiting implemented
+□ Error tracking configured
+□ Analytics configured
+□ Documentation written
+□ Terms of Service and Privacy Policy
+□ Support email configured
+□ Demo content prepared
+□ Load testing completed
+□ Backup and recovery plan
+
+LAUNCH DAY:
+□ DNS configured
+□ SSL certificates verified
+□ Environment variables set
+□ Database migrations run
+□ Monitoring dashboards ready
+□ Team trained on support
+□ Social media announcements ready
+□ ProductHunt submission prepared
+
+================================================================================
+END OF DOCUMENT
+================================================================================
+
+Notes for Implementation:
+- Start with Phase 1 and validate core functionality
+- Use feature flags for gradual rollout
+- Implement comprehensive logging from day 1
+- Keep the UI simple and focused
+- Prioritize response speed and reliability
+- Get user feedback early and often
+
+This PRD is optimized for implementation with Claude Code. Begin by setting up
+the Next.js project with TypeScript and Supabase integration.

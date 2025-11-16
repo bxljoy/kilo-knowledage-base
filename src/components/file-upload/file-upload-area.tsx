@@ -1,0 +1,398 @@
+'use client';
+
+import { useCallback, useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { useDropzone } from 'react-dropzone';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+
+interface FileUploadAreaProps {
+  knowledgeBaseId: string;
+  currentFileCount: number;
+  maxFiles: number;
+}
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ACCEPTED_FILE_TYPES = {
+  'application/pdf': ['.pdf'],
+};
+
+interface UploadingFile {
+  name: string;
+  progress: number;
+  abortController: AbortController;
+}
+
+interface FailedFile {
+  file: File;
+  error: string;
+}
+
+export function FileUploadArea({
+  knowledgeBaseId,
+  currentFileCount,
+  maxFiles,
+}: FileUploadAreaProps) {
+  const router = useRouter();
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadingFiles, setUploadingFiles] = useState<Map<string, UploadingFile>>(new Map());
+  const [failedFiles, setFailedFiles] = useState<FailedFile[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  const cancelUpload = useCallback((filename: string) => {
+    const file = uploadingFiles.get(filename);
+    if (file) {
+      file.abortController.abort();
+      setUploadingFiles((prev) => {
+        const newMap = new Map(prev);
+        newMap.delete(filename);
+        return newMap;
+      });
+      toast.info(`Upload cancelled: ${filename}`);
+    }
+  }, [uploadingFiles]);
+
+  const uploadFile = useCallback(async (file: File) => {
+    const abortController = new AbortController();
+
+    // Add to uploading files
+    setUploadingFiles((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(file.name, {
+        name: file.name,
+        progress: 0,
+        abortController,
+      });
+      return newMap;
+    });
+
+    // Create FormData
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      // Upload file with abort signal
+      const response = await fetch(
+        `/api/knowledge-bases/${knowledgeBaseId}/files`,
+        {
+          method: 'POST',
+          body: formData,
+          signal: abortController.signal,
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || `Failed to upload ${file.name}`);
+      }
+
+      // Update progress to 100%
+      setUploadingFiles((prev) => {
+        const newMap = new Map(prev);
+        const existing = newMap.get(file.name);
+        if (existing) {
+          newMap.set(file.name, { ...existing, progress: 100 });
+        }
+        return newMap;
+      });
+
+      // Remove from uploading files after a short delay
+      setTimeout(() => {
+        setUploadingFiles((prev) => {
+          const newMap = new Map(prev);
+          newMap.delete(file.name);
+          return newMap;
+        });
+      }, 1000);
+
+      return { success: true };
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AbortError') {
+        // Upload was cancelled
+        setUploadingFiles((prev) => {
+          const newMap = new Map(prev);
+          newMap.delete(file.name);
+          return newMap;
+        });
+        return { success: false, cancelled: true };
+      }
+
+      // Upload failed
+      const errorMessage = err instanceof Error ? err.message : 'Upload failed';
+      setUploadingFiles((prev) => {
+        const newMap = new Map(prev);
+        newMap.delete(file.name);
+        return newMap;
+      });
+
+      return { success: false, error: errorMessage, file };
+    }
+  }, [knowledgeBaseId]);
+
+  const retryUpload = useCallback(async (failedFile: FailedFile) => {
+    // Remove from failed files list
+    setFailedFiles((prev) => prev.filter((f) => f.file.name !== failedFile.file.name));
+
+    const result = await uploadFile(failedFile.file);
+
+    if (result.success) {
+      toast.success(`Successfully uploaded ${failedFile.file.name}`);
+      router.refresh();
+    } else if (!result.cancelled) {
+      toast.error(`Failed to upload ${failedFile.file.name}`);
+      setFailedFiles((prev) => [...prev, { file: failedFile.file, error: result.error || 'Unknown error' }]);
+    }
+  }, [uploadFile, router]);
+
+  const onDrop = useCallback(
+    async (acceptedFiles: File[], rejectedFiles: any[]) => {
+      setError(null);
+
+      // Check file limit
+      if (currentFileCount + acceptedFiles.length > maxFiles) {
+        const errorMsg = `Cannot upload ${acceptedFiles.length} file(s). You can only have ${maxFiles} files per knowledge base.`;
+        setError(errorMsg);
+        toast.error(errorMsg);
+        return;
+      }
+
+      // Handle rejected files
+      if (rejectedFiles.length > 0) {
+        const reasons = rejectedFiles.map((file) => {
+          const errors = file.errors.map((e: any) => e.message).join(', ');
+          return `${file.file.name}: ${errors}`;
+        });
+        const errorMsg = `Some files were rejected:\n${reasons.join('\n')}`;
+        setError(errorMsg);
+        toast.error('Some files were rejected. Please check file requirements.');
+        return;
+      }
+
+      if (acceptedFiles.length === 0) {
+        return;
+      }
+
+      setIsUploading(true);
+      let successCount = 0;
+      const newFailedFiles: FailedFile[] = [];
+
+      try {
+        for (const file of acceptedFiles) {
+          const result = await uploadFile(file);
+
+          if (result.success) {
+            successCount++;
+          } else if (!result.cancelled) {
+            newFailedFiles.push({ file: result.file!, error: result.error || 'Unknown error' });
+            toast.error(`Failed to upload ${file.name}`);
+          }
+        }
+
+        // Show success message
+        if (successCount > 0) {
+          toast.success(`Successfully uploaded ${successCount} file${successCount > 1 ? 's' : ''}`);
+          router.refresh();
+        }
+
+        // Add to failed files list
+        if (newFailedFiles.length > 0) {
+          setFailedFiles((prev) => [...prev, ...newFailedFiles]);
+          setError(`Failed to upload ${newFailedFiles.length} file${newFailedFiles.length > 1 ? 's' : ''}. You can retry below.`);
+        }
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [uploadFile, currentFileCount, maxFiles, router]
+  );
+
+  const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
+    onDrop,
+    accept: ACCEPTED_FILE_TYPES,
+    maxSize: MAX_FILE_SIZE,
+    multiple: true,
+    disabled: isUploading || currentFileCount >= maxFiles,
+  });
+
+  const isDisabled = isUploading || currentFileCount >= maxFiles;
+
+  return (
+    <div className="space-y-4">
+      <div
+        {...getRootProps()}
+        className={`
+          border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
+          ${isDragActive && !isDragReject ? 'border-blue-500 bg-blue-50' : ''}
+          ${isDragReject ? 'border-red-500 bg-red-50' : ''}
+          ${!isDragActive && !isDisabled ? 'border-gray-300 hover:border-gray-400' : ''}
+          ${isDisabled ? 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60' : ''}
+        `}
+      >
+        <input {...getInputProps()} />
+
+        <div className="space-y-4">
+          {/* Upload Icon */}
+          <div className="flex justify-center">
+            <svg
+              className={`w-12 h-12 ${isDragActive ? 'text-blue-500' : 'text-gray-400'}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
+            </svg>
+          </div>
+
+          {/* Instructions */}
+          <div>
+            {isDisabled ? (
+              <p className="text-gray-500">
+                {currentFileCount >= maxFiles
+                  ? 'Maximum file limit reached. Delete files to upload more.'
+                  : 'Uploading...'}
+              </p>
+            ) : (
+              <>
+                <p className="text-lg font-medium text-gray-700">
+                  {isDragActive
+                    ? isDragReject
+                      ? 'Invalid file type'
+                      : 'Drop files here'
+                    : 'Drag and drop PDF files here'}
+                </p>
+                <p className="text-sm text-gray-500 mt-1">
+                  or click to browse files
+                </p>
+              </>
+            )}
+          </div>
+
+          {/* Restrictions */}
+          {!isDisabled && (
+            <div className="text-xs text-gray-500 space-y-1">
+              <p>• PDF files only</p>
+              <p>• Maximum file size: 10MB</p>
+              <p>• Maximum pages: 200 per PDF</p>
+              <p>• Maximum {maxFiles} files per knowledge base</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Upload Progress */}
+      {uploadingFiles.size > 0 && (
+        <div className="space-y-2">
+          {Array.from(uploadingFiles.values()).map((file) => (
+            <div key={file.name} className="space-y-1">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-700 truncate flex-1">{file.name}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-500">{file.progress}%</span>
+                  <button
+                    onClick={() => cancelUpload(file.name)}
+                    className="text-red-600 hover:text-red-800 p-1"
+                    title="Cancel upload"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${file.progress}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div className="rounded-lg bg-red-50 border border-red-200 p-4">
+          <p className="text-sm text-red-800 whitespace-pre-line">{error}</p>
+        </div>
+      )}
+
+      {/* Failed Files with Retry */}
+      {failedFiles.length > 0 && (
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium text-gray-900">Failed Uploads</h3>
+          {failedFiles.map((failedFile) => (
+            <div
+              key={failedFile.file.name}
+              className="flex items-center justify-between p-3 border border-red-200 rounded-lg bg-red-50"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {failedFile.file.name}
+                </p>
+                <p className="text-xs text-red-600 mt-1">{failedFile.error}</p>
+              </div>
+              <div className="flex items-center gap-2 ml-4">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => retryUpload(failedFile)}
+                  className="text-blue-600 hover:text-blue-700 border-blue-300"
+                >
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                    />
+                  </svg>
+                  Retry
+                </Button>
+                <button
+                  onClick={() => setFailedFiles((prev) => prev.filter((f) => f.file.name !== failedFile.file.name))}
+                  className="text-gray-400 hover:text-gray-600 p-1"
+                  title="Remove from list"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

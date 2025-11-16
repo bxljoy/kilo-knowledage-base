@@ -1,0 +1,879 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Initialize Next.js Project with Core Dependencies",
+        "description": "Set up the foundational Next.js 14 project with TypeScript, Tailwind CSS, and essential dependencies",
+        "details": "Create a new Next.js 14 project using 'npx create-next-app@latest kilo --typescript --tailwind --eslint --app --src-dir --import-alias @/*'. Install core dependencies: '@supabase/supabase-js' for database and auth, '@google/generative-ai' for Gemini API, 'ai' and '@ai-sdk/google' for chat streaming, '@radix-ui/react-*' components, 'lucide-react' for icons, 'zod' for validation, 'react-hook-form' with '@hookform/resolvers', and 'class-variance-authority' for component styling. Configure TypeScript strict mode, set up ESLint with Next.js rules, and create basic folder structure: /app/(auth), /app/(dashboard), /components/ui, /lib, /types, /hooks directories.",
+        "testStrategy": "Verify project builds successfully with 'npm run build', TypeScript compiles without errors, and all dependencies install correctly. Test that the default Next.js page loads in development mode.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Next.js 14 Project with TypeScript and Tailwind",
+            "description": "Initialize the base Next.js 14 project using create-next-app with TypeScript, Tailwind CSS, ESLint, and app directory structure",
+            "dependencies": [],
+            "details": "Run 'npx create-next-app@latest kilo --typescript --tailwind --eslint --app --src-dir --import-alias @/*' to create the project. Verify that TypeScript configuration includes strict mode, Tailwind CSS is properly configured with the app directory, and ESLint is set up with Next.js recommended rules. Ensure the project structure uses the new app directory with src folder and proper import alias configuration.",
+            "status": "done",
+            "testStrategy": "Verify project creation by running 'npm run dev' and confirming the default Next.js page loads successfully at localhost:3000",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Install Core Dependencies and UI Libraries",
+            "description": "Install all essential dependencies including Supabase client, AI SDKs, Radix UI components, and form handling libraries",
+            "dependencies": [
+              1
+            ],
+            "details": "Install the following packages: '@supabase/supabase-js' for database and auth, '@google/generative-ai' for Gemini API, 'ai' and '@ai-sdk/google' for chat streaming, '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-select', '@radix-ui/react-toast', 'lucide-react' for icons, 'zod' for validation, 'react-hook-form', '@hookform/resolvers/zod', and 'class-variance-authority' for component styling utilities.",
+            "status": "done",
+            "testStrategy": "Confirm all dependencies install without conflicts by running 'npm install' and checking package.json for correct versions, then test import statements work correctly",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Configure TypeScript and ESLint Settings",
+            "description": "Set up strict TypeScript configuration and ESLint rules for code quality and consistency",
+            "dependencies": [
+              2
+            ],
+            "details": "Configure tsconfig.json with strict mode enabled, proper path mapping for the @/* alias, and Next.js 14 app directory settings. Update ESLint configuration to include Next.js recommended rules, TypeScript rules, and any custom rules for code consistency. Ensure TypeScript strict mode catches common errors and that ESLint rules enforce consistent code style across the project.",
+            "status": "done",
+            "testStrategy": "Run 'npm run lint' to verify ESLint configuration works without errors and 'npx tsc --noEmit' to confirm TypeScript configuration compiles successfully",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create Project Directory Structure and Base Files",
+            "description": "Set up the organized folder structure with core directories and placeholder files for the application architecture",
+            "dependencies": [
+              3
+            ],
+            "details": "Create the following directory structure: /src/app/(auth) for authentication pages, /src/app/(dashboard) for main application pages, /src/components/ui for reusable UI components, /src/lib for utility functions and configurations, /src/types for TypeScript type definitions, and /src/hooks for custom React hooks. Add basic index files and type definitions to establish the project architecture foundation.",
+            "status": "done",
+            "testStrategy": "Verify project builds successfully with 'npm run build' and that the directory structure supports proper imports using the @/* alias configuration",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 3,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Break down the project initialization into setup phases: project creation, dependency installation, TypeScript configuration, and project structure setup. Each subtask should focus on a specific aspect of the foundation setup."
+      },
+      {
+        "id": 2,
+        "title": "Configure Supabase Integration and Authentication",
+        "description": "Set up Supabase project, database schema, and Google OAuth authentication system",
+        "details": "Create a new Supabase project and configure the database schema as specified in the PRD: knowledge_bases, files, chat_sessions, and chat_messages tables with UUID primary keys and proper foreign key relationships. Enable Row Level Security (RLS) policies to ensure data isolation. Configure Google OAuth provider in Supabase Auth settings. Create Supabase client configuration in /lib/supabase with separate server and client instances. Implement authentication middleware for protecting API routes and pages. Create auth utilities for session management and user state. Set up environment variables: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, and SUPABASE_SERVICE_ROLE_KEY.",
+        "testStrategy": "Test Google OAuth login flow works correctly, verify RLS policies prevent unauthorized data access, confirm database schema creates successfully, and validate that authenticated and unauthenticated states are properly handled.",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Supabase Project and Initial Configuration",
+            "description": "Set up a new Supabase project with proper organization and initial settings",
+            "dependencies": [],
+            "details": "Create a new Supabase project through the dashboard, configure project settings, generate and securely store API keys (URL, anon key, service role key). Set up project organization and billing if required. Document project URL and keys for environment configuration.",
+            "status": "done",
+            "testStrategy": "Verify project is accessible through Supabase dashboard and API keys are valid by testing basic connection",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Design and Implement Database Schema",
+            "description": "Create the core database tables: knowledge_bases, files, chat_sessions, and chat_messages with proper relationships",
+            "dependencies": [
+              1
+            ],
+            "details": "Create knowledge_bases table with UUID primary key, user_id (auth.users FK), name, description, created_at. Create files table with UUID primary key, knowledge_base_id FK, file_name, file_size, page_count, gemini_file_id, status, uploaded_at. Create chat_sessions table with UUID primary key, knowledge_base_id FK, user_id FK, title, created_at. Create chat_messages table with UUID primary key, session_id FK, role (user/assistant), content, created_at. All tables use UUID primary keys and proper foreign key constraints.",
+            "status": "done",
+            "testStrategy": "Verify all tables are created successfully with correct column types, foreign key constraints work properly, and sample data can be inserted and retrieved",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Configure Row Level Security (RLS) Policies",
+            "description": "Implement RLS policies for all tables to ensure proper data isolation and security",
+            "dependencies": [
+              2
+            ],
+            "details": "Enable RLS on all tables. Create policies for knowledge_bases: users can only access their own knowledge bases. Create policies for files: users can only access files in their knowledge bases. Create policies for chat_sessions: users can only access their own sessions. Create policies for chat_messages: users can only access messages from their sessions. Test policies with different user scenarios to ensure data isolation.",
+            "status": "done",
+            "testStrategy": "Test RLS policies by creating multiple test users and verifying they cannot access each other's data, confirm authenticated users can access their own data, and unauthenticated requests are properly blocked",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Configure Google OAuth Authentication Provider",
+            "description": "Set up Google OAuth in Supabase Auth settings and configure OAuth flow",
+            "dependencies": [
+              1
+            ],
+            "details": "Enable Google OAuth provider in Supabase Auth settings. Create Google Cloud Console project and OAuth 2.0 credentials. Configure authorized redirect URIs for both development and production. Set up OAuth consent screen with proper app information. Configure Supabase with Google client ID and secret. Test OAuth flow end-to-end.",
+            "status": "done",
+            "testStrategy": "Test complete Google OAuth flow: user clicks sign in, redirects to Google, grants permissions, redirects back to application with valid session, and user data is properly stored in auth.users table",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create Supabase Client Configuration and Utilities",
+            "description": "Implement Supabase client instances and authentication utilities for the Next.js application",
+            "dependencies": [
+              3,
+              4
+            ],
+            "details": "Create /lib/supabase/client.ts with browser client using createBrowserClient. Create /lib/supabase/server.ts with server client using createServerClient and Next.js cookies. Create /lib/supabase/middleware.ts for auth middleware. Implement auth utilities in /lib/auth.ts: getCurrentUser, signInWithGoogle, signOut, getSession functions. Create TypeScript types for database schema in /types/database.ts.",
+            "status": "done",
+            "testStrategy": "Verify client and server instances work correctly, test authentication utilities in both client and server contexts, confirm middleware properly protects routes, and validate TypeScript types match database schema",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Set Up Environment Variables and Configuration",
+            "description": "Configure all necessary environment variables and finalize Supabase integration setup",
+            "dependencies": [
+              5
+            ],
+            "details": "Create .env.local file with NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY. Add environment variables to .env.example for documentation. Configure Next.js middleware in middleware.ts to handle authentication routes. Test all environment variables are properly loaded and accessible. Verify integration works end-to-end with authentication flow.",
+            "status": "done",
+            "testStrategy": "Verify environment variables are properly loaded, test complete authentication flow works with configured environment, confirm protected routes redirect unauthenticated users, and validate all Supabase integration components work together",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 7,
+        "recommendedSubtasks": 6,
+        "expansionPrompt": "Split into: Supabase project creation, database schema setup with RLS policies, Google OAuth configuration, Supabase client configuration, authentication middleware implementation, and environment setup. Each component has specific security and configuration requirements."
+      },
+      {
+        "id": 3,
+        "title": "Implement Google Gemini File Search API Integration",
+        "description": "Set up Google Gemini API client and FileSearchStore management for document processing",
+        "details": "Install @google/generative-ai SDK and configure Gemini client with File Search API capabilities. Create /lib/gemini.ts with functions to: create FileSearchStores for each knowledge base, upload PDF files directly to Gemini (no local storage), manage file states (uploading/processing/ready/failed), and handle error scenarios. Implement file validation for PDF format, size limits (10MB), and page count (200 pages max). Create streaming file upload with progress tracking. Configure GEMINI_API_KEY environment variable and implement proper error handling for API rate limits and service failures.",
+        "testStrategy": "Test PDF upload flow end-to-end, verify FileSearchStore creation and file association, validate file size and format restrictions work correctly, confirm error handling for corrupted files and API failures, and test file deletion from Gemini stores.",
+        "priority": "high",
+        "dependencies": [
+          "2"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install and configure Google Gemini SDK",
+            "description": "Install @google/generative-ai package and set up basic Gemini client configuration with API key management",
+            "dependencies": [],
+            "details": "Install @google/generative-ai SDK via npm. Create environment variable GEMINI_API_KEY in .env.local. Initialize Gemini client in /lib/gemini.ts with proper configuration including API key validation and basic error handling for authentication failures.",
+            "status": "done",
+            "testStrategy": "Test SDK installation, verify API key configuration loads correctly, and confirm basic client initialization works without errors",
+            "updatedAt": "2025-11-16T12:26:50.432Z",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Create FileSearchStore management functions",
+            "description": "Implement functions to create, manage, and delete Gemini FileSearchStore instances for knowledge bases",
+            "dependencies": [
+              1
+            ],
+            "details": "Build createFileSearchStore(), deleteFileSearchStore(), and listFileSearchStores() functions in /lib/gemini.ts. Each knowledge base should map to one FileSearchStore. Implement proper naming conventions and metadata handling for stores. Add error handling for store creation failures and quota limits.",
+            "status": "done",
+            "testStrategy": "Test FileSearchStore CRUD operations, verify store creation with proper metadata, and confirm error handling for API failures",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-16T12:40:58.758Z"
+          },
+          {
+            "id": 3,
+            "title": "Implement file validation system",
+            "description": "Create comprehensive file validation for PDF format, size limits, and page count restrictions",
+            "dependencies": [],
+            "details": "Build validateFile() function checking: PDF format validation using file headers, 10MB size limit enforcement, 200-page maximum using PDF parsing library. Create user-friendly validation error messages. Implement client-side and server-side validation for security.",
+            "status": "done",
+            "testStrategy": "Test validation with various file types and sizes, verify PDF page count detection accuracy, and confirm proper error messages for validation failures",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-16T12:28:04.719Z"
+          },
+          {
+            "id": 4,
+            "title": "Build streaming file upload implementation",
+            "description": "Create streaming file upload system with progress tracking for PDF files to Gemini API",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Implement uploadFileToGemini() function with streaming upload capabilities. Create progress tracking using upload events. Handle chunked uploads for large files. Implement resume functionality for interrupted uploads. Add timeout handling and retry logic for network failures.",
+            "status": "done",
+            "testStrategy": "Test upload progress tracking accuracy, verify streaming functionality with large files, and confirm upload resume works after interruption",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-16T12:28:08.604Z"
+          },
+          {
+            "id": 5,
+            "title": "Implement file state management system",
+            "description": "Create comprehensive file state tracking (uploading/processing/ready/failed) with database integration",
+            "dependencies": [
+              4
+            ],
+            "details": "Build file state management with enum states: uploading, processing, ready, failed. Create database schema updates for file status tracking. Implement state transition logic and webhook handling for Gemini processing completion. Add state persistence and recovery mechanisms.",
+            "status": "done",
+            "testStrategy": "Test state transitions work correctly, verify database persistence of file states, and confirm webhook handling for processing completion",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-16T12:41:22.467Z"
+          },
+          {
+            "id": 6,
+            "title": "Create comprehensive error handling system",
+            "description": "Implement robust error handling for API rate limits, service failures, and various failure scenarios",
+            "dependencies": [
+              1
+            ],
+            "details": "Build comprehensive error handling for: API rate limit errors with exponential backoff, service unavailability with retry mechanisms, authentication failures, quota exceeded errors, and network timeouts. Create user-friendly error messages and logging system for debugging.",
+            "status": "done",
+            "testStrategy": "Test error handling for various API failure scenarios, verify rate limiting backoff works correctly, and confirm user-friendly error messages display properly",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-16T12:28:12.266Z"
+          },
+          {
+            "id": 7,
+            "title": "Create integration testing suite",
+            "description": "Build comprehensive end-to-end tests for complete Gemini API integration workflow",
+            "dependencies": [
+              5,
+              6
+            ],
+            "details": "Create integration tests covering: complete file upload workflow from validation to Gemini storage, FileSearchStore lifecycle management, error scenario testing with mock failures, file state management verification, and performance testing with multiple concurrent uploads.",
+            "status": "pending",
+            "testStrategy": "Run full end-to-end integration tests, verify all error scenarios are properly handled, and confirm performance meets requirements under load",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 8,
+        "recommendedSubtasks": 7,
+        "expansionPrompt": "Break into: SDK installation and configuration, FileSearchStore management, file upload streaming implementation, file validation system, error handling for API failures, file state management, and integration testing. Each aspect involves complex API interactions.",
+        "updatedAt": "2025-11-16T12:41:26.076Z"
+      },
+      {
+        "id": 4,
+        "title": "Build Authentication Pages and User Management",
+        "description": "Create login, signup pages and user session management using Supabase Auth with Google OAuth",
+        "details": "Create /app/(auth)/login and /app/(auth)/signup pages with clean, minimal UI using shadcn/ui components. Implement Google OAuth sign-in button with proper error handling and loading states. Create AuthProvider context for managing user state across the application. Build protected route wrapper for dashboard pages. Implement sign-out functionality with proper session cleanup. Add user avatar and account dropdown in the main layout. Create account settings page for viewing usage stats and account information. Handle authentication redirects and deep linking after login.",
+        "testStrategy": "Test complete authentication flow: sign up, sign in, sign out, and protected route access. Verify error handling for authentication failures, confirm user state persistence across page reloads, and validate proper redirects after authentication.",
+        "priority": "medium",
+        "dependencies": [
+          "2"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Login and Signup Page Components",
+            "description": "Build /app/(auth)/login and /app/(auth)/signup pages with clean, minimal UI using shadcn/ui components including forms, buttons, and input fields",
+            "dependencies": [],
+            "details": "Create the authentication pages directory structure and implement login/signup forms with proper form validation, error display, and loading states. Use shadcn/ui components for consistent styling and implement responsive design. Include Google OAuth sign-in button with proper branding and accessibility features.",
+            "status": "done",
+            "testStrategy": "Test form validation, error handling, responsive design, and accessibility compliance for both login and signup pages",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-16T12:44:54.678Z"
+          },
+          {
+            "id": 2,
+            "title": "Implement AuthProvider Context for User State Management",
+            "description": "Create React context provider to manage user authentication state, session data, and authentication methods across the application",
+            "dependencies": [
+              1
+            ],
+            "details": "Build AuthProvider context with useAuth hook for managing user state, login/logout functions, and session persistence. Integrate with Supabase Auth for Google OAuth authentication and handle authentication state changes. Implement proper TypeScript types for user data and authentication methods.",
+            "status": "done",
+            "testStrategy": "Test user state persistence across page reloads, verify authentication methods work correctly, and validate context provides accurate user data",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-16T12:50:13.728Z"
+          },
+          {
+            "id": 3,
+            "title": "Build Protected Route Middleware and Wrapper",
+            "description": "Create middleware and wrapper components to protect dashboard routes and handle authentication redirects for unauthorized users",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement protected route wrapper component that checks authentication status and redirects unauthorized users to login page. Create middleware for route protection at the Next.js level. Handle deep linking by storing the intended destination and redirecting after successful authentication.",
+            "status": "done",
+            "testStrategy": "Test protected route access for authenticated and unauthenticated users, verify proper redirects and deep linking functionality",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-16T12:52:36.328Z"
+          },
+          {
+            "id": 4,
+            "title": "Implement Sign-out Functionality and Session Management",
+            "description": "Build sign-out functionality with proper session cleanup and implement user avatar with account dropdown in the main layout",
+            "dependencies": [
+              2
+            ],
+            "details": "Create sign-out function that properly clears Supabase session and local state. Implement user avatar component and account dropdown menu in the main layout header. Include user information display and account management options with proper styling and hover states.",
+            "status": "done",
+            "testStrategy": "Test complete sign-out flow ensures proper session cleanup, verify user avatar displays correctly, and validate dropdown functionality",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-16T12:54:59.934Z"
+          },
+          {
+            "id": 5,
+            "title": "Create Account Settings Page and User Profile Management",
+            "description": "Build account settings page for viewing usage stats, account information, and managing user profile details",
+            "dependencies": [
+              3
+            ],
+            "details": "Create /app/(dashboard)/account/settings page with sections for user profile information, usage statistics, and account management options. Display user's email, account creation date, and usage metrics. Implement proper layout with navigation and responsive design using shadcn/ui components.",
+            "status": "done",
+            "testStrategy": "Test account settings page loads correctly, verify user information displays accurately, and validate usage statistics are properly calculated and displayed",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-16T12:56:46.979Z"
+          }
+        ],
+        "complexity": 5,
+        "recommendedSubtasks": 5,
+        "expansionPrompt": "Organize into: login/signup UI components, AuthProvider context implementation, protected route middleware, session management utilities, and account settings page. Focus on user experience and proper state management.",
+        "updatedAt": "2025-11-16T12:56:46.979Z"
+      },
+      {
+        "id": 5,
+        "title": "Create Knowledge Base Management System",
+        "description": "Build CRUD operations for knowledge bases with UI for creation, editing, and deletion",
+        "details": "Create /app/(dashboard)/dashboard page displaying all user's knowledge bases in a grid layout. Implement knowledge base creation modal with name validation and automatic Gemini FileSearchStore creation. Build knowledge base cards showing file count, storage usage, and last updated date. Create knowledge base settings page for renaming and deletion with confirmation dialogs. Implement the 5 knowledge base limit per user with appropriate UI feedback. Add loading states and optimistic UI updates for better UX. Create API routes: GET/POST /api/knowledge-bases, PATCH/DELETE /api/knowledge-bases/[id] with proper authentication and validation.",
+        "testStrategy": "Test knowledge base CRUD operations, verify 5-knowledge-base limit enforcement, confirm Gemini FileSearchStore creation/deletion synchronization, validate user permissions and data isolation, and test error handling for API failures.",
+        "priority": "medium",
+        "dependencies": [
+          "3",
+          "4"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Dashboard UI Layout and Grid Components",
+            "description": "Build the main dashboard page layout with responsive grid system for displaying knowledge base cards and implement proper spacing, loading states, and empty state handling.",
+            "dependencies": [],
+            "details": "Create /app/(dashboard)/dashboard page with responsive grid layout using CSS Grid or Flexbox. Implement knowledge base card components with consistent sizing and hover effects. Add loading skeleton components for when data is being fetched. Create empty state component with call-to-action for creating first knowledge base. Ensure mobile-responsive design with appropriate breakpoints.",
+            "status": "done",
+            "testStrategy": "Test responsive behavior across different screen sizes, verify loading states display correctly, and confirm empty state shows appropriate guidance for new users.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-16T13:01:40.789Z"
+          },
+          {
+            "id": 2,
+            "title": "Implement Knowledge Base CRUD Operations",
+            "description": "Build complete Create, Read, Update, Delete operations for knowledge bases including creation modal, editing functionality, and deletion with confirmation dialogs.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create knowledge base creation modal with form validation using react-hook-form and zod. Implement name validation (required, length limits, uniqueness). Build editing interface for renaming knowledge bases. Create deletion confirmation dialog with warning about data loss. Add proper error handling and user feedback for all operations. Implement optimistic UI updates for better user experience.",
+            "status": "done",
+            "testStrategy": "Test all CRUD operations work correctly, verify validation prevents invalid submissions, confirm deletion warnings display properly, and validate optimistic updates provide smooth UX.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Build API Routes for Knowledge Base Management",
+            "description": "Implement RESTful API endpoints for knowledge base operations with proper authentication, validation, and error handling.",
+            "dependencies": [],
+            "details": "Create GET/POST /api/knowledge-bases endpoint for listing and creating knowledge bases. Implement PATCH/DELETE /api/knowledge-bases/[id] for updating and deleting specific knowledge bases. Add proper authentication middleware to verify user ownership. Implement request validation using zod schemas. Add comprehensive error handling with appropriate HTTP status codes and error messages.",
+            "status": "done",
+            "testStrategy": "Test all API endpoints with various inputs, verify authentication prevents unauthorized access, confirm validation rejects invalid requests, and validate proper HTTP status codes are returned.",
+            "parentId": "undefined",
+            "updatedAt": "2025-11-16T13:09:27.513Z"
+          },
+          {
+            "id": 4,
+            "title": "Enforce 5 Knowledge Base Limit with UI Feedback",
+            "description": "Implement business logic to enforce the 5 knowledge base limit per user and provide appropriate UI feedback when limit is reached.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Add database query to count user's existing knowledge bases before creation. Implement limit validation in both frontend and backend. Create UI components to display current usage (e.g., '3 of 5 knowledge bases'). Disable create button and show informative message when limit is reached. Provide upgrade or deletion suggestions when at limit.",
+            "status": "done",
+            "testStrategy": "Test limit enforcement prevents creation of 6th knowledge base, verify UI accurately displays current usage count, confirm appropriate feedback is shown when limit is reached.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Integrate Gemini FileSearchStore Synchronization",
+            "description": "Implement automatic creation and deletion of Gemini FileSearchStore instances when knowledge bases are created or deleted.",
+            "dependencies": [
+              3
+            ],
+            "details": "Integrate @google/generative-ai SDK to create FileSearchStore instances when knowledge bases are created. Implement cleanup logic to delete corresponding Gemini stores when knowledge bases are deleted. Add error handling for Gemini API failures with appropriate rollback mechanisms. Store Gemini store IDs in knowledge base records for future reference.",
+            "status": "done",
+            "testStrategy": "Test FileSearchStore creation and deletion synchronization, verify error handling rolls back database changes on Gemini API failures, and confirm store IDs are properly stored and referenced.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Implement Knowledge Base Cards with Metadata Display",
+            "description": "Create knowledge base card components that display file count, storage usage, last updated date, and provide access to settings and actions.",
+            "dependencies": [
+              1,
+              3
+            ],
+            "details": "Build knowledge base card component with title, metadata display (file count, storage usage, last updated), and action buttons. Implement click-through navigation to knowledge base detail pages. Add settings dropdown or button for accessing edit and delete functions. Create loading states for metadata that needs to be calculated. Ensure cards have consistent styling and hover effects.",
+            "status": "done",
+            "testStrategy": "Test card display shows accurate metadata, verify navigation works correctly, confirm settings access provides proper edit/delete functionality, and validate loading states for dynamic data.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 6,
+        "recommendedSubtasks": 6,
+        "expansionPrompt": "Split into: dashboard UI layout, knowledge base CRUD operations, API route implementations, limit enforcement (5 KB limit), Gemini store synchronization, and optimistic UI updates. Each component has specific business logic requirements.",
+        "updatedAt": "2025-11-16T13:09:27.513Z"
+      },
+      {
+        "id": 6,
+        "title": "Implement File Upload and Management Interface",
+        "description": "Build PDF upload system with drag-and-drop, progress tracking, and file management UI",
+        "details": "Create /app/(dashboard)/kb/[id] page with file upload area using react-dropzone for drag-and-drop functionality. Implement file validation (PDF only, 10MB max, 200 pages max) before upload. Build upload progress indicator and file status display (uploading/processing/ready/failed). Create file list component showing file metadata: name, size, upload date, page count, and status. Add individual file deletion with confirmation dialog. Implement the 10-file limit per knowledge base with appropriate UI feedback. Create POST /api/knowledge-bases/[id]/files and DELETE /api/files/[id] endpoints. Handle all error scenarios with clear user-friendly messages.",
+        "testStrategy": "Test file upload flow with various file types and sizes, verify drag-and-drop functionality, confirm upload progress tracking accuracy, validate file limit enforcement, test file deletion, and verify error handling for invalid files and network issues.",
+        "priority": "medium",
+        "dependencies": [
+          "5"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up react-dropzone and drag-and-drop UI components",
+            "description": "Create the foundational drag-and-drop file upload interface using react-dropzone library",
+            "dependencies": [],
+            "details": "Install react-dropzone library and create a file upload zone component in /app/(dashboard)/kb/[id] page. Implement visual feedback for drag states (hover, active, reject) with proper styling. Create upload area with clear instructions and visual indicators. Add file type and size restrictions display in the UI.\n<info added on 2025-11-16T13:23:58.185Z>\nI'll analyze the codebase to understand the current implementation and then generate the update based on your completed work.Successfully completed subtask 6.1 with comprehensive drag-and-drop file upload implementation. Key achievements: react-dropzone library installed and integrated, created FileUploadArea component at /components/file-upload/file-upload-area.tsx with complete drag-and-drop functionality including visual state feedback for active/reject/disabled states, file validation enforcing PDF-only format with 10MB size limit and 200-page restriction, upload progress tracking with individual file progress bars, error handling for validation failures and upload errors, file limit enforcement preventing uploads when 10-file limit is reached, and clear visual indicators showing upload restrictions in UI. Created FileList component at /components/file-upload/file-list.tsx displaying file metadata including filename, size, page count, upload date, and status badges with ready/processing/uploading/failed states. Integration completed in knowledge base detail page at /app/dashboard/knowledge-bases/[id]/page.tsx with proper server-side data fetching and responsive layout. All visual feedback requirements met including hover effects, drag state indicators, and user-friendly error messages.\n</info added on 2025-11-16T13:23:58.185Z>",
+            "status": "done",
+            "testStrategy": "Test drag-and-drop functionality across different browsers, verify visual feedback states, and confirm file selection works both via drag-drop and click",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement comprehensive file validation logic",
+            "description": "Build client-side and server-side validation for PDF files with size and page limits",
+            "dependencies": [
+              1
+            ],
+            "details": "Create validation functions to check file type (PDF only), file size (10MB max), and page count (200 pages max) using PDF-lib or similar library. Implement validation both on file selection and before upload. Add validation for the 10-file limit per knowledge base. Create clear error messages for each validation failure scenario.\n<info added on 2025-11-16T13:26:55.621Z>\nI'll analyze the codebase to understand the current implementation and provide specific details about the completed file validation work.Based on my analysis of the codebase and the user's completion report, here's the implementation status update:\n\nIMPLEMENTATION COMPLETED - Full validation system successfully implemented across both client and server layers. Client-side validation (src/components/file-upload/file-upload-area.tsx) uses react-dropzone with pre-upload checks for file type (PDF only), size (10MB max), and file count limits. Server-side validation (src/app/api/knowledge-bases/[id]/files/route.ts) provides comprehensive protection with authentication verification, ownership checks, and pdf-lib integration for accurate page count validation (200 pages max). Gemini FileSearchStore integration functions (createFileSearchStore, deleteFileSearchStore, addFileToStore, removeFileFromStore) successfully implemented in src/lib/gemini.ts. Database persistence layer handles file metadata storage with proper error handling. All validation error messages implemented as specified: \"Only PDF files are allowed\", \"File size must be less than 10MB\", \"PDF must have 200 pages or less\", \"Maximum of 10 files per knowledge base reached\", and \"Failed to process PDF file. File may be corrupted or invalid.\" Validation chain operates as designed: react-dropzone handles initial filtering, API endpoint performs deep validation including PDF page analysis, and both layers enforce the 10-file per knowledge base limit with clear user feedback.\n</info added on 2025-11-16T13:26:55.621Z>",
+            "status": "done",
+            "testStrategy": "Test validation with various file types, oversized files, PDFs with excessive pages, and boundary conditions to ensure all validation rules work correctly",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Build upload progress tracking system",
+            "description": "Implement real-time progress indicators for file uploads with status updates",
+            "dependencies": [
+              2
+            ],
+            "details": "Create upload progress components showing percentage completion and estimated time remaining. Implement progress tracking for individual files and overall batch uploads. Add cancel upload functionality. Create visual progress bars and status indicators that update in real-time during upload process.",
+            "status": "done",
+            "testStrategy": "Test progress tracking accuracy with files of different sizes, verify cancel functionality works properly, and confirm progress updates display correctly in real-time",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create file status management system",
+            "description": "Implement state management for tracking file upload and processing states",
+            "dependencies": [
+              3
+            ],
+            "details": "Create state management system to track file statuses: uploading, processing, ready, failed. Implement status persistence in database and real-time updates in UI. Add retry functionality for failed uploads. Create status indicators with appropriate icons and colors for each state.",
+            "status": "done",
+            "testStrategy": "Test status transitions work correctly, verify failed uploads can be retried, confirm status persistence across page refreshes, and validate real-time status updates",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Build file list UI components with metadata display",
+            "description": "Create comprehensive file listing interface showing file metadata and actions",
+            "dependencies": [
+              4
+            ],
+            "details": "Create file list component displaying file metadata: name, size, upload date, page count, and current status. Implement sorting and filtering options. Add file preview functionality and download options. Create responsive design that works on mobile devices. Include file type icons and status badges.",
+            "status": "done",
+            "testStrategy": "Test file list displays correct metadata, verify sorting and filtering functionality, confirm responsive design works across devices, and validate file actions work properly",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Implement file deletion functionality with confirmation",
+            "description": "Build secure file deletion system with user confirmation and proper cleanup",
+            "dependencies": [
+              5
+            ],
+            "details": "Create DELETE /api/files/[id] endpoint with proper authorization checks. Implement confirmation dialog with file details before deletion. Add bulk deletion functionality for multiple files. Ensure proper cleanup from both database and Gemini FileSearchStore. Handle deletion errors gracefully.\n<info added on 2025-11-16T13:30:03.888Z>\nI'll analyze the codebase to understand the project structure and implementation details before updating the subtask.Successfully implemented file deletion system with robust security and cleanup:\n\nIMPLEMENTATION DETAILS:\n- Created secure DELETE /api/files/[id] endpoint (src/app/api/files/[id]/route.ts) with multi-layer authentication and ownership verification via knowledge_bases table\n- Built comprehensive confirmation dialog (src/components/file-upload/delete-file-dialog.tsx) featuring file metadata display, clear warning messages, and loading state management\n- Integrated deletion functionality into file list UI (src/components/file-upload/file-list.tsx) with proper state management and error handling\n\nSECURITY MEASURES:\n- Authentication check using Supabase auth.getUser()\n- Ownership verification through knowledge_bases inner join ensuring users can only delete their own files\n- Protected API endpoint returns 401 for unauthorized access and 404 for non-existent/non-owned files\n\nCLEANUP PROCESS:\n- Gemini FileSearchStore removal using removeFileFromStore() function\n- Gemini file deletion via deleteFileFromGemini() API call\n- Database record deletion with CASCADE handling for related data\n- Graceful fallback strategy: continues with database deletion even if Gemini operations fail\n\nUI/UX FEATURES:\n- Red-themed delete button for visual emphasis of destructive action\n- Confirmation dialog displays file name, size, page count, and permanent deletion warning\n- Loading states during deletion operation with \"Deleting...\" feedback\n- Automatic page refresh after successful deletion to show updated file list\n\nERROR HANDLING:\n- Console logging for debugging Gemini API failures\n- Graceful degradation if external services fail\n- Proper HTTP status codes and error messages\n- Try/catch blocks around all async operations\n\nTECHNICAL INTEGRATION:\n- Leverages existing Gemini library functions (removeFileFromStore, deleteFileFromGemini)\n- Uses TypeScript for type safety with Database types\n- Follows existing project patterns for API structure and UI components\n- Router.refresh() for immediate UI updates post-deletion\n</info added on 2025-11-16T13:30:03.888Z>",
+            "status": "done",
+            "testStrategy": "Test individual and bulk file deletion, verify confirmation dialogs prevent accidental deletions, confirm proper cleanup from all systems, and validate error handling for deletion failures",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Implement comprehensive error handling and user feedback",
+            "description": "Create robust error handling system with clear user-friendly error messages",
+            "dependencies": [
+              6
+            ],
+            "details": "Implement error handling for all upload scenarios: network failures, API errors, validation failures, and quota exceeded. Create user-friendly error messages with actionable suggestions. Add retry mechanisms for transient failures. Implement proper error logging for debugging. Create toast notifications and error states in UI.",
+            "status": "done",
+            "testStrategy": "Test error handling for various failure scenarios, verify error messages are clear and helpful, confirm retry functionality works properly, and validate error logging captures necessary information",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 7,
+        "recommendedSubtasks": 7,
+        "expansionPrompt": "Break down into: drag-and-drop UI implementation, file validation logic, upload progress tracking, file status management, file list UI components, deletion functionality, and error handling. Each involves complex user interactions and state management."
+      },
+      {
+        "id": 7,
+        "title": "Build AI Chat Interface with Streaming Responses",
+        "description": "Create chat UI with Vercel AI SDK integration for real-time conversations with uploaded documents",
+        "details": "Create /app/(dashboard)/kb/[id]/chat page with chat interface using Vercel AI SDK. Implement streaming chat responses from Gemini File Search API with proper message formatting. Build chat input with character limit (500 chars) and submission handling. Create message components for user questions and AI responses with copy-to-clipboard functionality. Add thumbs up/down rating system for responses. Implement error handling for empty knowledge bases, query failures, and API timeouts. Create POST /api/knowledge-bases/[id]/chat endpoint using Vercel AI SDK's streamText with Gemini provider. Add loading states and typing indicators for better UX.",
+        "testStrategy": "Test end-to-end chat functionality with uploaded documents, verify streaming responses work correctly, confirm responses are grounded only in uploaded documents, test rating system, validate error handling for various failure scenarios, and verify chat input validation.",
+        "priority": "high",
+        "dependencies": [
+          "6"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create chat page layout and route structure",
+            "description": "Set up the /app/(dashboard)/kb/[id]/chat page with proper layout, navigation, and basic UI structure using shadcn/ui components",
+            "dependencies": [],
+            "details": "Create the chat page file structure with proper Next.js app router layout. Implement responsive design with sidebar for knowledge base info and main chat area. Add navigation breadcrumbs and back button to knowledge base overview. Set up proper TypeScript interfaces for chat-related types.",
+            "status": "done",
+            "testStrategy": "Test responsive layout across different screen sizes, verify navigation works correctly, and confirm proper routing from knowledge base pages",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Build chat input component with validation",
+            "description": "Create chat input component with 500 character limit, submission handling, and proper form validation using react-hook-form",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement textarea component with character counter, submit button with loading state, and keyboard shortcuts (Enter to send, Shift+Enter for new line). Add form validation using zod schema and react-hook-form. Include disabled state when knowledge base is empty or loading.",
+            "status": "done",
+            "testStrategy": "Test character limit enforcement, form validation, keyboard shortcuts, and submission handling with various input scenarios",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Create message display components",
+            "description": "Build user and AI message components with proper formatting, copy-to-clipboard functionality, and responsive design",
+            "dependencies": [
+              1
+            ],
+            "details": "Create separate components for user messages and AI responses with distinct styling. Implement copy-to-clipboard functionality using browser API with success feedback. Add proper message timestamp formatting and user avatar display. Include markdown rendering for AI responses.",
+            "status": "done",
+            "testStrategy": "Test copy functionality across browsers, verify message formatting and markdown rendering, and confirm responsive design on mobile devices",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement Vercel AI SDK integration",
+            "description": "Set up Vercel AI SDK with Google Gemini provider for streaming chat responses and proper configuration",
+            "dependencies": [],
+            "details": "Configure Vercel AI SDK with Google Gemini provider using @ai-sdk/google. Set up streaming response handling with proper error boundaries. Implement chat completion with document context from knowledge base. Add proper TypeScript types for streaming responses.",
+            "status": "done",
+            "testStrategy": "Test streaming responses work correctly, verify Gemini API integration, and confirm proper error handling for API failures",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Create API endpoint for chat processing",
+            "description": "Build POST /api/knowledge-bases/[id]/chat endpoint using Vercel AI SDK's streamText with proper document retrieval and context injection",
+            "dependencies": [
+              4
+            ],
+            "details": "Implement API route that retrieves relevant documents from knowledge base, constructs context for Gemini API, and streams responses using Vercel AI SDK. Add proper authentication middleware and rate limiting. Include document citation in responses.",
+            "status": "done",
+            "testStrategy": "Test API endpoint with various query types, verify document retrieval accuracy, confirm streaming functionality, and validate authentication requirements",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Add thumbs up/down rating system",
+            "description": "Implement response rating system with thumbs up/down buttons and database storage for feedback collection",
+            "dependencies": [
+              3,
+              5
+            ],
+            "details": "Add rating buttons to AI message components with proper state management. Create database schema for storing ratings linked to chat messages. Implement optimistic UI updates and proper error handling for rating submissions.",
+            "status": "done",
+            "testStrategy": "Test rating functionality with database persistence, verify optimistic updates work correctly, and confirm proper error handling for rating failures",
+            "parentId": "undefined"
+          },
+          {
+            "id": 7,
+            "title": "Implement real-time state management",
+            "description": "Set up chat state management with proper loading states, typing indicators, and real-time message updates using React state",
+            "dependencies": [
+              2,
+              3,
+              5
+            ],
+            "details": "Create chat context provider for managing conversation state, implement typing indicators during AI response generation, add loading states for message submission. Handle optimistic message updates and proper error state management.",
+            "status": "done",
+            "testStrategy": "Test state management across component re-renders, verify loading states display correctly, and confirm proper error state handling",
+            "parentId": "undefined"
+          },
+          {
+            "id": 8,
+            "title": "Add comprehensive error handling",
+            "description": "Implement error handling for empty knowledge bases, API timeouts, query failures, and network issues with user-friendly error messages",
+            "dependencies": [
+              5,
+              7
+            ],
+            "details": "Create error boundary components for chat interface, implement retry mechanisms for failed API calls, add user-friendly error messages for different failure scenarios. Include fallback UI for when knowledge base has no documents or when API is unavailable.",
+            "status": "done",
+            "testStrategy": "Test error handling for various failure scenarios including network timeouts, empty knowledge bases, API errors, and malformed responses",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 9,
+        "recommendedSubtasks": 8,
+        "expansionPrompt": "Organize into: chat UI components, Vercel AI SDK integration, streaming response handling, message formatting, rating system implementation, error handling for chat failures, API endpoint creation, and real-time state management. This is the core feature requiring precise implementation."
+      },
+      {
+        "id": 8,
+        "title": "Implement Rate Limiting and Usage Controls",
+        "description": "Add usage tracking, rate limiting, and quota enforcement for MVP limits",
+        "details": "Implement rate limiting middleware using Vercel KV or in-memory storage for the 100 queries per day per user limit. Create usage tracking in the database for monitoring file uploads, storage usage, and query counts. Add usage dashboard in user account settings showing current limits and usage. Implement quota enforcement with user-friendly error messages when limits are reached. Create admin utilities for monitoring overall system usage. Add usage analytics tracking to chat_messages table for business metrics. Implement automatic cleanup of old chat sessions and message data according to retention policies.",
+        "testStrategy": "Test rate limiting enforcement works correctly, verify usage tracking accuracy across different user actions, confirm quota reset functionality, test error handling when limits are exceeded, and validate usage dashboard displays correct information.",
+        "priority": "medium",
+        "dependencies": [
+          "7"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Rate Limiting Middleware",
+            "description": "Create rate limiting middleware using Vercel KV or in-memory storage for the 100 queries per day per user limit",
+            "dependencies": [],
+            "details": "Set up Vercel KV storage client and create middleware to track user query counts. Implement sliding window or fixed window rate limiting algorithm. Create functions to increment, check, and reset user query counts. Add middleware to API routes that need rate limiting protection. Handle edge cases like concurrent requests and ensure atomic operations.",
+            "status": "done",
+            "testStrategy": "Test rate limiting enforcement with concurrent requests, verify query counting accuracy, confirm daily reset functionality, and validate error responses when limits are exceeded",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Design and Implement Usage Tracking Database Schema",
+            "description": "Create database tables and functions for tracking file uploads, storage usage, and query counts",
+            "dependencies": [
+              1
+            ],
+            "details": "Add usage tracking columns to existing tables or create new usage_tracking table with fields for user_id, query_count, file_uploads, storage_used, and reset_date. Implement database functions to increment usage counters atomically. Add usage analytics tracking to chat_messages table for business metrics. Create indexes for efficient usage queries.",
+            "status": "done",
+            "testStrategy": "Test usage tracking accuracy across different user actions, verify atomic counter updates, confirm database performance with usage queries, and validate data integrity",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Build Quota Enforcement Logic",
+            "description": "Implement quota enforcement with user-friendly error messages when limits are reached across all user actions",
+            "dependencies": [
+              2
+            ],
+            "details": "Create quota checking functions for file uploads (10 files per KB), storage limits, and daily query limits. Implement enforcement at API route level with descriptive error messages. Add quota validation before expensive operations. Create utility functions to check remaining quotas and time until reset. Handle edge cases and prevent quota bypass attempts.",
+            "status": "done",
+            "testStrategy": "Test quota enforcement across all user actions, verify error messages are user-friendly, confirm quota checking prevents resource abuse, and validate quota reset timing",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create Usage Dashboard UI",
+            "description": "Build usage dashboard in user account settings showing current limits and usage with visual progress indicators",
+            "dependencies": [
+              2
+            ],
+            "details": "Create usage dashboard component displaying current usage vs limits for queries, file uploads, and storage. Add progress bars or charts showing usage percentages. Display time until quota reset. Create responsive design that works on mobile and desktop. Add real-time usage updates and refresh capabilities.",
+            "status": "done",
+            "testStrategy": "Test dashboard displays correct usage information, verify real-time updates work properly, confirm responsive design on different devices, and validate progress indicators accuracy",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Implement Admin Monitoring Utilities",
+            "description": "Create admin utilities for monitoring overall system usage and automatic cleanup of old data",
+            "dependencies": [
+              2
+            ],
+            "details": "Build admin dashboard showing system-wide usage statistics and user activity. Implement automatic cleanup jobs for old chat sessions and message data according to retention policies. Create monitoring alerts for high usage patterns. Add utilities to manually adjust user quotas if needed. Implement data export capabilities for analytics.",
+            "status": "done",
+            "testStrategy": "Test admin dashboard shows accurate system metrics, verify automatic cleanup runs correctly without data loss, confirm monitoring alerts trigger appropriately, and validate data export functionality",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 6,
+        "recommendedSubtasks": 5,
+        "expansionPrompt": "Split into: rate limiting middleware implementation, usage tracking database design, quota enforcement logic, usage dashboard UI, and admin monitoring utilities. Focus on scalability and accurate tracking."
+      },
+      {
+        "id": 9,
+        "title": "Create Onboarding Flow and Demo Content",
+        "description": "Build user onboarding experience with demo knowledge base and helpful empty states",
+        "details": "Create welcome tour component using a library like react-joyride for first-time user guidance. Build demo knowledge base with sample PDF files showcasing platform capabilities (e.g., sample research papers, documentation). Create helpful empty states with clear call-to-actions for when users have no knowledge bases or files. Add onboarding checklist component guiding users through key actions: create knowledge base, upload first file, ask first question. Implement progressive disclosure of features during onboarding. Create help documentation accessible from the main navigation. Add contextual tooltips and hints throughout the interface.",
+        "testStrategy": "Test complete onboarding flow for new users, verify demo content loads and functions correctly, confirm empty states display appropriate guidance, validate help documentation accessibility, and test onboarding tour completion tracking.",
+        "priority": "medium",
+        "dependencies": [
+          "8"
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Welcome Tour Component with React Joyride",
+            "description": "Integrate react-joyride library to create an interactive welcome tour that guides new users through the main interface features and key actions.",
+            "dependencies": [],
+            "details": "Install react-joyride library and create a WelcomeTour component that highlights key UI elements like navigation, knowledge base creation button, file upload areas, and chat interface. Implement tour step configuration with informative tooltips and clear next/previous navigation. Add tour completion tracking in user preferences to avoid showing repeatedly. Include skip option and progress indicators. Style tooltips to match application theme using shadcn/ui components.",
+            "status": "done",
+            "testStrategy": "Test tour progression through all steps, verify tooltips position correctly on different screen sizes, confirm tour completion tracking works, and validate skip functionality",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Create Demo Knowledge Base with Sample Content",
+            "description": "Build a pre-populated demo knowledge base containing sample PDF files that showcase platform capabilities for new users.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create sample PDF files including research papers, technical documentation, and user guides that demonstrate various document types the platform can handle. Implement demo knowledge base creation logic that automatically populates with these files when users complete onboarding tour. Ensure demo content showcases AI chat capabilities with pre-written sample questions. Add mechanism to clearly mark demo content and provide option to delete or convert to regular knowledge base.",
+            "status": "done",
+            "testStrategy": "Verify demo knowledge base creates successfully with all sample files, test AI chat responses work correctly with demo content, and confirm users can interact with demo before creating their own content",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Build Empty State Components with Call-to-Actions",
+            "description": "Create helpful empty state components that appear when users have no knowledge bases or files, providing clear guidance and actionable next steps.",
+            "dependencies": [],
+            "details": "Design and implement empty state components for: no knowledge bases created, empty knowledge base with no files, and empty chat with no conversation history. Each empty state should include illustrative icons, encouraging copy, and prominent call-to-action buttons. Create EmptyKnowledgeBases component with 'Create Your First Knowledge Base' button, EmptyFileList component with 'Upload Your First Document' action, and EmptyChat component with sample questions. Use consistent styling with shadcn/ui components.",
+            "status": "done",
+            "testStrategy": "Test empty states display correctly in their respective contexts, verify call-to-action buttons trigger appropriate modals or actions, and confirm responsive design works across devices",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create Help Documentation and Onboarding Checklist",
+            "description": "Implement comprehensive help documentation accessible from navigation and create an onboarding checklist component to guide users through key platform actions.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Create /app/(dashboard)/help page with searchable documentation covering knowledge base creation, file upload, AI chat usage, and troubleshooting. Implement OnboardingChecklist component that tracks user progress through key actions: create knowledge base, upload first file, ask first question, and explore features. Add contextual tooltips throughout interface using Tooltip components. Create help content in markdown format covering common use cases and best practices. Include FAQ section and contact information.",
+            "status": "done",
+            "testStrategy": "Test help documentation search functionality, verify onboarding checklist updates correctly as users complete actions, confirm contextual tooltips display appropriately, and validate help content accessibility",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 4,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Break into: onboarding tour component integration, demo knowledge base creation, empty state components, and help documentation setup. Focus on user experience and clear guidance."
+      },
+      {
+        "id": 10,
+        "title": "Add Monitoring, Analytics, and Production Deployment",
+        "description": "Set up error tracking, analytics, performance monitoring, and deploy to production",
+        "details": "Install and configure Sentry for error tracking and performance monitoring with proper source maps. Set up Vercel Analytics for user behavior tracking and page performance metrics. Create custom analytics dashboard for business metrics: user signups, file uploads, queries per user, response times, error rates. Implement comprehensive logging throughout the application for debugging. Configure production environment variables and database. Set up CI/CD pipeline with Vercel for automatic deployments. Create monitoring alerts for critical errors and performance issues. Implement health check endpoints for system monitoring. Configure proper security headers and CSP policies.",
+        "testStrategy": "Verify error tracking captures and reports issues correctly, confirm analytics data collection works in production, test monitoring alerts trigger appropriately, validate performance metrics are accurate, test production deployment process, and verify all security headers are properly configured.",
+        "priority": "medium",
+        "dependencies": [
+          "9"
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Install and configure Sentry for error tracking",
+            "description": "Set up Sentry SDK for comprehensive error tracking and performance monitoring with proper source maps configuration",
+            "dependencies": [],
+            "details": "Install @sentry/nextjs package, configure sentry.client.config.ts and sentry.server.config.ts files, set up SENTRY_DSN environment variable, configure source maps for production builds, implement custom error boundaries, and test error capture functionality",
+            "status": "pending",
+            "testStrategy": "Verify errors are captured and reported to Sentry dashboard, test source maps work correctly for stack traces, confirm performance monitoring data is collected",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Vercel Analytics for user behavior tracking",
+            "description": "Set up Vercel Analytics for page performance metrics and user behavior tracking",
+            "dependencies": [],
+            "details": "Install @vercel/analytics package, add Analytics component to root layout, configure Web Vitals tracking, implement custom event tracking for key user actions (file uploads, queries, knowledge base creation), and set up conversion funnel tracking",
+            "status": "pending",
+            "testStrategy": "Confirm analytics data appears in Vercel dashboard, verify custom events are tracked correctly, test page performance metrics collection",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Create custom analytics dashboard for business metrics",
+            "description": "Build internal dashboard to track key business metrics like user signups, file uploads, and query performance",
+            "dependencies": [
+              1
+            ],
+            "details": "Create /app/(dashboard)/admin/analytics page with charts showing user signups, file upload counts, queries per user, response times, error rates, and storage usage. Implement data aggregation queries, use chart library like Recharts for visualizations, add date range filtering, and create real-time metrics updates",
+            "status": "pending",
+            "testStrategy": "Verify all metrics display correctly with accurate data, test date range filtering, confirm real-time updates work properly",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Configure production environment and database setup",
+            "description": "Set up production environment variables, database configuration, and deployment settings",
+            "dependencies": [],
+            "details": "Configure production DATABASE_URL, NEXTAUTH_SECRET, GEMINI_API_KEY, and SENTRY_DSN environment variables in Vercel. Set up production PostgreSQL database with proper connection pooling, configure database migrations for production deployment, and implement environment-specific configurations",
+            "status": "pending",
+            "testStrategy": "Verify production database connections work, test environment variables are properly loaded, confirm migrations run successfully in production",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Set up CI/CD pipeline with Vercel for automatic deployments",
+            "description": "Configure automated deployment pipeline with proper build steps, testing, and monitoring",
+            "dependencies": [
+              4
+            ],
+            "details": "Configure vercel.json for build settings, set up GitHub integration for automatic deployments on push to main branch, implement pre-deployment checks including linting and type checking, configure preview deployments for pull requests, and set up deployment notifications",
+            "status": "pending",
+            "testStrategy": "Test automatic deployment triggers on code push, verify preview deployments work for pull requests, confirm build checks prevent broken deployments",
+            "parentId": "undefined"
+          },
+          {
+            "id": 6,
+            "title": "Implement security headers and health check endpoints",
+            "description": "Configure production security headers, CSP policies, and system monitoring endpoints",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Configure security headers in next.config.js including CSP, HSTS, X-Frame-Options, and X-Content-Type-Options. Create /api/health endpoint for system status monitoring, implement /api/metrics endpoint for monitoring integration, set up monitoring alerts for critical errors and performance issues, and configure proper CORS policies\n<info added on 2025-11-16T16:37:08.122Z>\nI need to analyze the codebase to understand what was implemented and then provide the update. Let me explore the project structure first.Let me focus on the project structure excluding node_modules:Now let me check for the API endpoints and configuration files mentioned:Perfect! I can see the health and metrics endpoints exist. Let me check the next.config.ts file and the DEPLOYMENT.md:Now let me search for any npm cache permission issues mentioned in package.json or any related error handling:Based on my analysis of the codebase and the user's request, I can now provide the update for the subtask. The user has completed the health check endpoints, security headers configuration, and comprehensive deployment documentation, but deferred the remaining monitoring features due to npm cache permission issues.\n\nCOMPLETION: Successfully implemented core monitoring and security infrastructure. Created /api/health endpoint (src/app/api/health/route.ts) with database connectivity checks and proper HTTP status codes (200 for healthy, 503 for degraded/unhealthy). Implemented /api/metrics endpoint (src/app/api/metrics/route.ts) providing comprehensive application metrics including user count, knowledge base count, file statistics, storage usage, and query analytics. Configured production-ready security headers in next.config.ts including X-Frame-Options (DENY), X-Content-Type-Options (nosniff), Content Security Policy with proper allowlists for Supabase and Google APIs, HSTS for production, and additional security headers (X-XSS-Protection, Referrer-Policy, Permissions-Policy). Created comprehensive DEPLOYMENT.md documentation covering complete production deployment process, environment variable configuration, database setup, Vercel deployment options, post-deployment steps, monitoring setup, security verification, troubleshooting guide, and scaling considerations. Deferred implementation of Sentry error tracking, Vercel Analytics integration, and custom analytics dashboard due to npm cache permission issues encountered during package installations that would require system-level access resolution.\n</info added on 2025-11-16T16:37:08.122Z>",
+            "status": "done",
+            "testStrategy": "Verify security headers are properly set in production, test health check endpoints respond correctly, confirm monitoring alerts trigger appropriately for system issues",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 5,
+        "recommendedSubtasks": 6,
+        "expansionPrompt": "Organize into: error tracking setup (Sentry), analytics implementation (Vercel), custom metrics dashboard, production environment configuration, CI/CD pipeline setup, and security headers configuration. Each tool requires specific configuration."
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2025-11-16T13:09:27.514Z",
+      "taskCount": 10,
+      "completedCount": 4,
+      "tags": [
+        "master"
+      ],
+      "created": "2025-11-16T13:19:29.532Z",
+      "description": "Tasks for master context",
+      "updated": "2025-11-16T16:21:24.556Z"
+    }
+  }
+}
