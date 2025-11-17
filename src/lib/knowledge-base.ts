@@ -46,8 +46,8 @@ export async function uploadFileToKnowledgeBase(
 
     const result = await supabase
       .from('files')
-      .insert<FileInsert>(fileRecord)
-      .select<'*', FileRow>()
+      .insert(fileRecord as any)
+      .select()
       .single();
 
     if (result.error || !result.data) {
@@ -56,7 +56,7 @@ export async function uploadFileToKnowledgeBase(
       throw new Error(`Failed to save file record: ${result.error?.message || 'Unknown error'}`);
     }
 
-    return result.data;
+    return (result as any).data;
   } catch (error) {
     console.error('Error uploading file to knowledge base:', error);
     throw error;
@@ -85,7 +85,7 @@ export async function deleteFileFromKnowledgeBase(
     }
 
     // Delete from Gemini
-    await deleteFileFromGemini(result.data.gemini_file_id);
+    await deleteFileFromGemini((result as any).data.gemini_file_id);
 
     // Delete from database
     const { error: deleteError } = await supabase
@@ -166,7 +166,7 @@ export async function updateFileStatus(
     }
 
     // Get status from Gemini
-    const geminiFile = await getFileMetadata(result.data.gemini_file_id);
+    const geminiFile = await getFileMetadata((result as any).data.gemini_file_id);
 
     // Map Gemini state to our status
     let status: 'uploading' | 'processing' | 'ready' | 'failed';
@@ -184,8 +184,8 @@ export async function updateFileStatus(
       processed_at: status === 'ready' ? new Date().toISOString() : undefined,
     };
 
-    const updateResult = await supabase
-      .from('files')
+    const updateResult = await (supabase
+      .from('files') as any)
       .update(updateData)
       .eq('id', fileId)
       .select()
@@ -219,10 +219,10 @@ export async function getKnowledgeBaseStats(knowledgeBaseId: string) {
 
   const files = result.data;
   const totalFiles = files.length;
-  const totalSize = files.reduce((sum, file) => sum + file.file_size, 0);
-  const readyFiles = files.filter((f) => f.status === 'ready').length;
-  const processingFiles = files.filter((f) => f.status === 'processing').length;
-  const failedFiles = files.filter((f) => f.status === 'failed').length;
+  const totalSize = files.reduce((sum, file) => sum + (file as any).file_size, 0);
+  const readyFiles = files.filter((f) => (f as any).status === 'ready').length;
+  const processingFiles = files.filter((f) => (f as any).status === 'processing').length;
+  const failedFiles = files.filter((f) => (f as any).status === 'failed').length;
 
   return {
     totalFiles,

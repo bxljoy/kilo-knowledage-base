@@ -28,8 +28,8 @@ export default async function DashboardPage() {
 
   // Transform the data to include file_count
   const kbsWithFileCount = (knowledgeBases || []).map((kb) => ({
-    ...kb,
-    file_count: kb.files?.[0]?.count || 0,
+    ...(kb as any),
+    file_count: (kb as any).files?.[0]?.count || 0,
     files: undefined, // Remove the nested files object
   }));
 

@@ -57,7 +57,7 @@ export function DeleteFileDialog({
         <DialogHeader>
           <DialogTitle>Delete File</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete "{file?.filename}"?
+            Are you sure you want to delete "{file?.file_name}"?
           </DialogDescription>
         </DialogHeader>
 

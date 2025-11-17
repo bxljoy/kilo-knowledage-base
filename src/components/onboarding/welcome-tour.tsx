@@ -90,7 +90,7 @@ export function WelcomeTour({ onComplete, run = false }: WelcomeTourProps) {
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status } = data;
 
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
+    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status as any)) {
       setRunTour(false);
       onComplete?.();
     }

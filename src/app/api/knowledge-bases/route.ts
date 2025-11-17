@@ -107,7 +107,7 @@ export async function POST(request: Request) {
         name: name.trim(),
         description: description?.trim() || null,
         gemini_store_id: fileSearchStore.storeId,
-      })
+      } as any)
       .select()
       .single();
 

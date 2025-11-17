@@ -40,14 +40,14 @@ export function ChatInterface({
     await sendMessage({
       role: 'user',
       content: messageContent,
-    });
+    } as any);
   };
 
   const handleRetry = () => {
     // TODO: Implement retry logic if needed
   };
 
-  const isLoading = status === 'in_progress';
+  const isLoading = (status as any) === 'in_progress';
 
   // Show empty state if no files uploaded
   if (fileCount === 0) {

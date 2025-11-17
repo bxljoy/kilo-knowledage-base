@@ -152,3 +152,5 @@ export interface Database {
     Enums: {}
   }
 }
+
+export type KnowledgeBase = Database['public']['Tables']['knowledge_bases']['Row'];

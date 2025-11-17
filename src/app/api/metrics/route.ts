@@ -32,8 +32,8 @@ export async function GET() {
     const totalUsers = usersResult.data?.users?.length || 0;
     const totalKnowledgeBases = kbsResult.count || 0;
     const totalFiles = filesResult.data?.length || 0;
-    const totalStorage = filesResult.data?.reduce((sum, file) => sum + (file.file_size || 0), 0) || 0;
-    const totalQueries = queriesResult.data?.reduce((sum, record) => sum + (record.total_query_count || 0), 0) || 0;
+    const totalStorage = filesResult.data?.reduce((sum, file) => sum + ((file as any).file_size || 0), 0) || 0;
+    const totalQueries = queriesResult.data?.reduce((sum, record) => sum + ((record as any).total_query_count || 0), 0) || 0;
 
     const metrics = {
       timestamp: new Date().toISOString(),

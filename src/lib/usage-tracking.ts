@@ -23,7 +23,7 @@ export interface UsageStats {
 export async function getUserUsageStats(userId: string): Promise<UsageStats | null> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase.rpc('get_user_usage', {
+  const { data, error } = await (supabase as any).rpc('get_user_usage', {
     p_user_id: userId,
   });
 
@@ -61,7 +61,7 @@ export async function getUserUsageStats(userId: string): Promise<UsageStats | nu
 export async function incrementDatabaseQueryCount(userId: string): Promise<boolean> {
   const supabase = await createClient();
 
-  const { error } = await supabase.rpc('increment_query_count', {
+  const { error } = await (supabase as any).rpc('increment_query_count', {
     p_user_id: userId,
   });
 
@@ -79,7 +79,7 @@ export async function incrementDatabaseQueryCount(userId: string): Promise<boole
 export async function incrementFileUploadCount(userId: string): Promise<boolean> {
   const supabase = await createClient();
 
-  const { error } = await supabase.rpc('increment_file_upload_count', {
+  const { error } = await (supabase as any).rpc('increment_file_upload_count', {
     p_user_id: userId,
   });
 
@@ -99,7 +99,7 @@ export async function incrementFileUploadCount(userId: string): Promise<boolean>
 export async function updateStorageUsage(userId: string, storageDelta: number): Promise<boolean> {
   const supabase = await createClient();
 
-  const { error } = await supabase.rpc('update_storage_usage', {
+  const { error } = await (supabase as any).rpc('update_storage_usage', {
     p_user_id: userId,
     p_storage_delta: storageDelta,
   });

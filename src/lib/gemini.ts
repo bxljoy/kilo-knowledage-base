@@ -290,7 +290,7 @@ export async function uploadToFileSearchStore(
     }
 
     // Get the document ID from the operation response
-    const documentId = operation.response?.name || '';
+    const documentId = (operation.response as any)?.name || '';
 
     return {
       documentId,

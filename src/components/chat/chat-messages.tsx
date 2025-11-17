@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { Message } from 'ai';
+import { UIMessage } from 'ai';
 import { UserMessage } from './user-message';
 import { AIMessage } from './ai-message';
 
 interface ChatMessagesProps {
-  messages: Message[];
+  messages: UIMessage[];
   isLoading: boolean;
   error?: Error;
   knowledgeBaseId?: string;
@@ -55,8 +55,8 @@ export function ChatMessages({ messages, isLoading, error, knowledgeBaseId, onRe
         {messages.map((message) => {
           // Extract content from message (AI SDK v5.x uses parts array for assistant messages)
           const content = message.role === 'assistant' && 'parts' in message
-            ? message.parts.map((part: any) => part.type === 'text' ? part.text : '').join('')
-            : message.content;
+            ? (message as any).parts.map((part: any) => part.type === 'text' ? part.text : '').join('')
+            : (message as any).content;
 
           return (
             <div key={message.id}>

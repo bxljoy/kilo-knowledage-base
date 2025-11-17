@@ -39,7 +39,7 @@ export default async function KnowledgeBasePage({ params }: KnowledgeBasePagePro
     redirect('/dashboard');
   }
 
-  const fileCount = knowledgeBase.files?.[0]?.count || 0;
+  const fileCount = (knowledgeBase as any).files?.[0]?.count || 0;
 
   // Fetch files for this knowledge base
   const { data: files, error: filesError } = await supabase
@@ -61,9 +61,9 @@ export default async function KnowledgeBasePage({ params }: KnowledgeBasePagePro
         <div className="mb-6">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-white mb-2">{knowledgeBase.name}</h1>
-              {knowledgeBase.description && (
-                <p className="text-sm text-slate-400">{knowledgeBase.description}</p>
+              <h1 className="text-2xl font-bold text-white mb-2">{(knowledgeBase as any).name}</h1>
+              {(knowledgeBase as any).description && (
+                <p className="text-sm text-slate-400">{(knowledgeBase as any).description}</p>
               )}
               <div className="mt-3 flex items-center gap-4 text-sm text-slate-400">
                 <span className="flex items-center gap-1">
@@ -71,7 +71,7 @@ export default async function KnowledgeBasePage({ params }: KnowledgeBasePagePro
                   <InfoTooltip content="Each knowledge base can hold up to 10 PDF files (10MB each)" />
                 </span>
                 <span>•</span>
-                <span>Updated {new Date(knowledgeBase.updated_at).toLocaleDateString()}</span>
+                <span>Updated {new Date((knowledgeBase as any).updated_at).toLocaleDateString()}</span>
               </div>
             </div>
             {fileCount > 0 && (

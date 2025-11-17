@@ -87,9 +87,9 @@ export async function PATCH(
       updates.description = description?.trim() || null;
 
     // Update knowledge base with ownership check
-    const { data: knowledgeBase, error } = await supabase
-      .from('knowledge_bases')
-      .update(updates as any)
+    const { data: knowledgeBase, error } = await (supabase
+      .from('knowledge_bases') as any)
+      .update(updates)
       .eq('id', id)
       .eq('user_id', user.id)
       .select()
@@ -145,8 +145,8 @@ export async function DELETE(
 
     // Delete from Gemini first
     try {
-      if (knowledgeBase.gemini_store_id) {
-        await deleteFileSearchStore(knowledgeBase.gemini_store_id);
+      if ((knowledgeBase as any).gemini_store_id) {
+        await deleteFileSearchStore((knowledgeBase as any).gemini_store_id);
       }
     } catch (geminiError) {
       console.error('Error deleting Gemini store:', geminiError);

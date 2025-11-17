@@ -54,7 +54,7 @@ export async function POST(
           knowledge_base_id: knowledgeBaseId,
           message_id: messageId,
           rating,
-        },
+        } as any,
         {
           onConflict: 'user_id,message_id',
         }
