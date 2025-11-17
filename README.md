@@ -25,6 +25,7 @@ An AI-powered knowledge base application that lets you upload PDF documents and 
 Before you begin, make sure you have:
 
 - Node.js 18+ installed
+- pnpm installed (`npm install -g pnpm`)
 - A [Supabase](https://supabase.com) account and project
 - A [Google Cloud Platform](https://console.cloud.google.com) account
 - Google Gemini API key from [AI Studio](https://aistudio.google.com/app/apikey)
@@ -41,10 +42,10 @@ cd kilo-knowledage-base
 2. **Install dependencies**
 
 ```bash
-npm install --legacy-peer-deps
+pnpm install
 ```
 
-> **Note:** We use `--legacy-peer-deps` because `react-joyride` (used for the welcome tour) doesn't yet support React 19. The library works fine despite the peer dependency warning.
+> **Note:** pnpm handles peer dependencies gracefully, so no special flags are needed even though `react-joyride` (used for the welcome tour) doesn't yet officially support React 19. The library works fine with React 19.
 
 3. **Set up environment variables**
 
@@ -103,7 +104,7 @@ In Google Cloud Console:
 7. **Run the development server**
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -203,10 +204,10 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed production deployment instruct
 ### Available Scripts
 
 ```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
+pnpm dev             # Start development server
+pnpm build           # Build for production
+pnpm start           # Start production server
+pnpm lint            # Run ESLint
 ```
 
 ### Health Check Endpoints
