@@ -74,18 +74,18 @@ export function AIMessage({ content, messageId, knowledgeBaseId }: AIMessageProp
   };
 
   return (
-    <div className="flex items-start gap-4">
-      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-medium">
+    <div className="flex items-start gap-3">
+      <div className="flex-shrink-0 w-9 h-9 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-semibold text-sm border border-blue-500/30">
         AI
       </div>
-      <div className="flex-1 bg-white rounded-lg p-4 shadow-sm max-w-2xl">
-        <p className="whitespace-pre-wrap break-words text-gray-800">{content}</p>
+      <div className="flex-1 bg-slate-800 rounded-xl p-5 shadow-lg max-w-3xl border border-slate-700">
+        <p className="whitespace-pre-wrap break-words text-slate-100 leading-relaxed">{content}</p>
 
         {/* Actions */}
-        <div className="mt-3 pt-3 border-t flex items-center gap-2">
+        <div className="mt-4 pt-4 border-t border-slate-700 flex items-center gap-2">
           <button
             onClick={handleCopy}
-            className="text-xs text-gray-600 hover:text-gray-900 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 transition-colors"
+            className="text-sm text-slate-400 hover:text-slate-200 flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-slate-700 transition-colors font-medium"
             title="Copy to clipboard"
           >
             {copied ? (
@@ -131,8 +131,8 @@ export function AIMessage({ content, messageId, knowledgeBaseId }: AIMessageProp
               <button
                 onClick={() => handleRating(1)}
                 disabled={isRating}
-                className={`p-1.5 rounded hover:bg-gray-100 transition-colors ${
-                  rating === 1 ? 'text-green-600' : 'text-gray-600 hover:text-green-600'
+                className={`p-2 rounded-lg transition-all ${
+                  rating === 1 ? 'text-green-400 bg-green-500/20' : 'text-slate-400 hover:text-green-400 hover:bg-slate-700'
                 } disabled:opacity-50`}
                 title="This was helpful"
               >
@@ -153,8 +153,8 @@ export function AIMessage({ content, messageId, knowledgeBaseId }: AIMessageProp
               <button
                 onClick={() => handleRating(-1)}
                 disabled={isRating}
-                className={`p-1.5 rounded hover:bg-gray-100 transition-colors ${
-                  rating === -1 ? 'text-red-600' : 'text-gray-600 hover:text-red-600'
+                className={`p-2 rounded-lg transition-all ${
+                  rating === -1 ? 'text-red-400 bg-red-500/20' : 'text-slate-400 hover:text-red-400 hover:bg-slate-700'
                 } disabled:opacity-50`}
                 title="This wasn't helpful"
               >

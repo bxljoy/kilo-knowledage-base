@@ -39,7 +39,7 @@ export function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="relative h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">
+        <button className="relative h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900">
           <Avatar>
             <AvatarImage
               src={user.user_metadata?.avatar_url}
@@ -52,10 +52,10 @@ export function UserMenu() {
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
+            <p className="text-sm font-medium leading-none text-white">
               {user.user_metadata?.full_name || 'Account'}
             </p>
-            <p className="text-xs leading-none text-gray-500">{user.email}</p>
+            <p className="text-xs leading-none text-slate-400">{user.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -66,7 +66,7 @@ export function UserMenu() {
           Settings
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
+        <DropdownMenuItem onClick={handleSignOut} className="text-red-400">
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -23,18 +23,18 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-xl p-8 space-y-6">
+    <div className="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-8 space-y-6">
       <div className="text-center space-y-3">
-        <h1 className="font-display text-5xl font-bold tracking-tight text-gray-900 leading-tight">
+        <h1 className="font-display text-5xl font-bold tracking-tight text-white leading-tight">
           Welcome to Kilo<br />Knowledge Base
         </h1>
-        <p className="text-gray-700 text-lg font-light">
+        <p className="text-slate-400 text-lg font-light">
           Sign in to access your knowledge bases and AI-powered chat
         </p>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-3 text-sm">
+        <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl p-3 text-sm">
           {error}
         </div>
       )}
@@ -90,7 +90,7 @@ export default function LoginPage() {
         )}
       </Button>
 
-      <p className="text-center text-sm text-gray-700">
+      <p className="text-center text-sm text-slate-400">
         By signing in, you agree to our Terms of Service and Privacy Policy
       </p>
     </div>

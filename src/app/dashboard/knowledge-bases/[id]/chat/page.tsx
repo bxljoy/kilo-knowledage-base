@@ -42,7 +42,7 @@ export default async function ChatPage({ params }: ChatPageProps) {
   return (
     <div className="h-[calc(100vh-4rem)] flex flex-col">
       {/* Header */}
-      <div className="border-b bg-white flex-shrink-0">
+      <div className="border-b border-slate-800 bg-slate-900/95 backdrop-blur flex-shrink-0">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -65,8 +65,8 @@ export default async function ChatPage({ params }: ChatPageProps) {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">{knowledgeBase.name}</h1>
-                <p className="text-sm text-gray-600">
+                <h1 className="text-xl font-bold text-white">{knowledgeBase.name}</h1>
+                <p className="text-sm text-slate-400">
                   {fileCount} file{fileCount !== 1 ? 's' : ''} • Chat
                 </p>
               </div>

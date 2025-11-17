@@ -43,24 +43,24 @@ function ProgressBar({ used, limit, label, unit = '', formatValue }: ProgressBar
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm">
-        <span className="font-medium text-gray-700">{label}</span>
-        <span className="text-gray-600">
+        <span className="font-medium text-white">{label}</span>
+        <span className="text-slate-400">
           {displayValue} / {displayLimit} {unit}
         </span>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+      <div className="w-full bg-slate-700 rounded-full h-2.5 overflow-hidden">
         <div
           className={`h-full transition-all duration-300 ${
             isAtLimit
-              ? 'bg-red-600'
+              ? 'bg-red-500'
               : isNearLimit
               ? 'bg-yellow-500'
-              : 'bg-blue-600'
+              : 'bg-blue-500'
           }`}
           style={{ width: `${Math.min(percentage, 100)}%` }}
         />
       </div>
-      <div className="flex items-center justify-between text-xs text-gray-500">
+      <div className="flex items-center justify-between text-xs text-slate-400">
         <span>{percentage}% used</span>
         <span>
           {formatValue
@@ -104,7 +104,7 @@ export function UsageDashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="flex items-center gap-2 text-gray-600">
+        <div className="flex items-center gap-2 text-slate-400">
           <svg
             className="animate-spin h-5 w-5"
             viewBox="0 0 24 24"
@@ -132,10 +132,10 @@ export function UsageDashboard() {
 
   if (error || !usage) {
     return (
-      <div className="rounded-lg bg-red-50 border border-red-200 p-4">
+      <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-4">
         <div className="flex items-start gap-3">
           <svg
-            className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+            className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -148,13 +148,13 @@ export function UsageDashboard() {
             />
           </svg>
           <div className="flex-1">
-            <p className="text-sm font-medium text-red-800 mb-1">
+            <p className="text-sm font-medium text-red-400 mb-1">
               Error loading usage data
             </p>
-            <p className="text-sm text-red-700">{error}</p>
+            <p className="text-sm text-red-300">{error}</p>
             <button
               onClick={fetchUsage}
-              className="mt-3 text-sm font-medium text-red-700 hover:text-red-900 underline"
+              className="mt-3 text-sm font-medium text-red-400 hover:text-red-300 underline"
             >
               Try again
             </button>
@@ -176,14 +176,14 @@ export function UsageDashboard() {
       {/* Header with refresh button */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Usage & Limits</h2>
-          <p className="text-sm text-gray-600 mt-1">
+          <h2 className="text-2xl font-bold text-white">Usage & Limits</h2>
+          <p className="text-sm text-slate-400 mt-1">
             Track your resource usage and remaining quotas
           </p>
         </div>
         <button
           onClick={fetchUsage}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+          className="px-4 py-2 text-sm font-medium text-white bg-slate-800 border border-slate-700 rounded-xl hover:bg-slate-700 transition-colors flex items-center gap-2"
         >
           <svg
             className="w-4 h-4"
@@ -203,10 +203,10 @@ export function UsageDashboard() {
       </div>
 
       {/* Daily Queries */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
         <div className="flex items-center gap-2 mb-4">
           <svg
-            className="w-5 h-5 text-blue-600"
+            className="w-5 h-5 text-blue-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -218,7 +218,7 @@ export function UsageDashboard() {
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
             />
           </svg>
-          <h3 className="text-lg font-semibold text-gray-900">Daily Queries</h3>
+          <h3 className="text-lg font-semibold text-white">Daily Queries</h3>
         </div>
         <ProgressBar
           used={usage.queries.used}
@@ -226,8 +226,8 @@ export function UsageDashboard() {
           label="AI Chat Queries"
           unit="queries"
         />
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+        <div className="mt-4 pt-4 border-t border-slate-700">
+          <div className="flex items-center gap-2 text-sm text-slate-400">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
@@ -244,10 +244,10 @@ export function UsageDashboard() {
       </div>
 
       {/* Knowledge Bases */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
         <div className="flex items-center gap-2 mb-4">
           <svg
-            className="w-5 h-5 text-purple-600"
+            className="w-5 h-5 text-purple-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -259,7 +259,7 @@ export function UsageDashboard() {
               d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
             />
           </svg>
-          <h3 className="text-lg font-semibold text-gray-900">Knowledge Bases</h3>
+          <h3 className="text-lg font-semibold text-white">Knowledge Bases</h3>
         </div>
         <ProgressBar
           used={usage.knowledgeBases.used}
@@ -270,10 +270,10 @@ export function UsageDashboard() {
       </div>
 
       {/* Storage */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
         <div className="flex items-center gap-2 mb-4">
           <svg
-            className="w-5 h-5 text-green-600"
+            className="w-5 h-5 text-green-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -285,7 +285,7 @@ export function UsageDashboard() {
               d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
             />
           </svg>
-          <h3 className="text-lg font-semibold text-gray-900">Storage</h3>
+          <h3 className="text-lg font-semibold text-white">Storage</h3>
         </div>
         <ProgressBar
           used={usage.storage.used}
@@ -296,20 +296,20 @@ export function UsageDashboard() {
       </div>
 
       {/* Lifetime Statistics */}
-      <div className="bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+      <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/30 rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">
           Lifetime Statistics
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-white rounded-lg p-4">
-            <div className="text-sm text-gray-600 mb-1">Total Queries</div>
-            <div className="text-2xl font-bold text-blue-600">
+          <div className="bg-slate-800 border border-slate-700 rounded-xl p-4">
+            <div className="text-sm text-slate-400 mb-1">Total Queries</div>
+            <div className="text-2xl font-bold text-blue-400">
               {usage.totalQueries.toLocaleString()}
             </div>
           </div>
-          <div className="bg-white rounded-lg p-4">
-            <div className="text-sm text-gray-600 mb-1">Total File Uploads</div>
-            <div className="text-2xl font-bold text-purple-600">
+          <div className="bg-slate-800 border border-slate-700 rounded-xl p-4">
+            <div className="text-sm text-slate-400 mb-1">Total File Uploads</div>
+            <div className="text-2xl font-bold text-purple-400">
               {usage.totalFileUploads.toLocaleString()}
             </div>
           </div>
@@ -317,10 +317,10 @@ export function UsageDashboard() {
       </div>
 
       {/* Info card */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
         <div className="flex gap-3">
           <svg
-            className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5"
+            className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -332,8 +332,8 @@ export function UsageDashboard() {
               d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <div className="flex-1 text-sm text-blue-800">
-            <p className="font-medium mb-1">About Usage Limits</p>
+          <div className="flex-1 text-sm text-slate-300">
+            <p className="font-medium mb-1 text-blue-400">About Usage Limits</p>
             <p>
               These limits help ensure fair usage across all users. Daily query
               limits reset every 24 hours at midnight UTC. Need higher limits?

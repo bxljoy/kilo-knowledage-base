@@ -17,9 +17,9 @@ export default async function UsagePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-900">
       {/* Header */}
-      <div className="border-b bg-white">
+      <div className="border-b border-slate-800 bg-slate-900/95 backdrop-blur">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-4">
             <Link href="/dashboard">

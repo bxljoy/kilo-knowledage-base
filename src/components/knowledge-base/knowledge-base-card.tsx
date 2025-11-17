@@ -46,14 +46,14 @@ export function KnowledgeBaseCard({ knowledgeBase, onEdit, onDelete }: Knowledge
             <CardTitle className="pr-8">{knowledgeBase.name}</CardTitle>
             <DropdownMenu>
               <DropdownMenuTrigger
-                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-accent rounded"
+                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-slate-700 rounded"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                 }}
               >
                 <svg
-                  className="h-5 w-5 text-foreground"
+                  className="h-5 w-5 text-slate-400 hover:text-white"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -82,13 +82,13 @@ export function KnowledgeBaseCard({ knowledgeBase, onEdit, onDelete }: Knowledge
           </CardHeader>
           <CardContent>
             {knowledgeBase.description && (
-              <p className="text-sm text-muted-foreground mb-4 line-clamp-2 font-medium">
+              <p className="text-sm text-slate-400 mb-4 line-clamp-2">
                 {knowledgeBase.description}
               </p>
             )}
-            <div className="flex items-center justify-between text-sm text-foreground font-bold uppercase tracking-wide">
+            <div className="flex items-center justify-between text-sm text-slate-300 font-medium">
               <span>{knowledgeBase.file_count || 0} files</span>
-              <span>Updated {updatedAt}</span>
+              <span className="text-slate-400">Updated {updatedAt}</span>
             </div>
           </CardContent>
         </Card>

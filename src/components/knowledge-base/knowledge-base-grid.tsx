@@ -135,11 +135,11 @@ export function KnowledgeBaseGrid({ initialKnowledgeBases, userId }: KnowledgeBa
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Your Knowledge Bases</h2>
-          <div className="text-gray-600 flex items-center gap-2">
+          <h2 className="text-3xl font-bold text-white">Your Knowledge Bases</h2>
+          <div className="text-slate-400 flex items-center gap-2 mt-1">
             {initialKnowledgeBases.length} / 5 knowledge bases
             <InfoTooltip content="You can create up to 5 knowledge bases to organize different sets of documents" />
           </div>
@@ -154,8 +154,8 @@ export function KnowledgeBaseGrid({ initialKnowledgeBases, userId }: KnowledgeBa
       </div>
 
       {initialKnowledgeBases.length >= 5 && (
-        <div className="rounded-lg bg-yellow-50 border border-yellow-200 p-4">
-          <p className="text-sm text-yellow-800">
+        <div className="rounded-xl bg-yellow-900/20 border border-yellow-800/50 p-4">
+          <p className="text-sm text-yellow-200 font-medium">
             You've reached the maximum of 5 knowledge bases. Please delete one to create a new one.
           </p>
         </div>

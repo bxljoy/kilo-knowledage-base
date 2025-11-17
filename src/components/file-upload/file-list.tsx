@@ -75,10 +75,10 @@ export function FileList({ files }: FileListProps) {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      uploading: { color: 'bg-blue-100 text-blue-800', label: 'Uploading' },
-      processing: { color: 'bg-yellow-100 text-yellow-800', label: 'Processing' },
-      ready: { color: 'bg-green-100 text-green-800', label: 'Ready' },
-      failed: { color: 'bg-red-100 text-red-800', label: 'Failed' },
+      uploading: { color: 'bg-blue-500/20 text-blue-400 border border-blue-500/30', label: 'Uploading' },
+      processing: { color: 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30', label: 'Processing' },
+      ready: { color: 'bg-green-500/20 text-green-400 border border-green-500/30', label: 'Ready' },
+      failed: { color: 'bg-red-500/20 text-red-400 border border-red-500/30', label: 'Failed' },
     };
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.ready;
@@ -122,8 +122,8 @@ export function FileList({ files }: FileListProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Files</h2>
-        <span className="text-sm text-gray-500">
+        <h2 className="text-xl font-semibold text-white">Files</h2>
+        <span className="text-sm text-slate-400">
           {filteredAndSortedFiles.length} {filteredAndSortedFiles.length === 1 ? 'file' : 'files'}
         </span>
       </div>
@@ -138,10 +138,10 @@ export function FileList({ files }: FileListProps) {
               placeholder="Search files..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 border border-slate-700 bg-slate-800 text-slate-100 placeholder:text-slate-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <svg
-              className="absolute left-3 top-2.5 w-5 h-5 text-gray-400"
+              className="absolute left-3 top-2.5 w-5 h-5 text-slate-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -160,7 +160,7 @@ export function FileList({ files }: FileListProps) {
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value as SortOption)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-2 border border-slate-700 bg-slate-800 text-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="date">Sort by Date</option>
           <option value="name">Sort by Name</option>
@@ -172,7 +172,7 @@ export function FileList({ files }: FileListProps) {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value as FilterStatus)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-2 border border-slate-700 bg-slate-800 text-slate-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="all">All Status</option>
           <option value="ready">Ready</option>
@@ -184,8 +184,8 @@ export function FileList({ files }: FileListProps) {
 
       {/* File List */}
       {filteredAndSortedFiles.length === 0 ? (
-        <div className="text-center py-8 bg-gray-50 rounded-lg">
-          <p className="text-gray-600">
+        <div className="text-center py-8 bg-slate-800/50 rounded-xl border border-slate-700">
+          <p className="text-slate-400">
             {searchQuery || filterStatus !== 'all'
               ? 'No files match your filters'
               : 'No files uploaded yet'}
@@ -196,14 +196,14 @@ export function FileList({ files }: FileListProps) {
           {filteredAndSortedFiles.map((file) => (
           <div
             key={file.id}
-            className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex items-center justify-between p-4 border border-slate-700 bg-slate-800 rounded-xl hover:bg-slate-700 hover:border-slate-600 transition-all"
           >
             {/* File Info */}
             <div className="flex items-center gap-4 flex-1 min-w-0">
               {/* PDF Icon */}
               <div className="flex-shrink-0">
                 <svg
-                  className="w-10 h-10 text-red-600"
+                  className="w-10 h-10 text-red-400"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -217,8 +217,8 @@ export function FileList({ files }: FileListProps) {
 
               {/* File Details */}
               <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-gray-900 truncate">{file.file_name}</h3>
-                <div className="flex items-center gap-3 mt-1 text-sm text-gray-500">
+                <h3 className="font-medium text-white truncate">{file.file_name}</h3>
+                <div className="flex items-center gap-3 mt-1 text-sm text-slate-400">
                   <span>{formatFileSize(file.file_size)}</span>
                   <span>•</span>
                   <span>{file.page_count || 0} pages</span>
@@ -236,7 +236,7 @@ export function FileList({ files }: FileListProps) {
             {/* Delete Action */}
             <div className="flex-shrink-0 ml-4">
               <button
-                className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                className="p-2 text-slate-400 hover:text-red-400 transition-colors"
                 title="Delete file"
                 onClick={() => handleDeleteClick(file)}
               >

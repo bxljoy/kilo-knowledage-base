@@ -24,24 +24,24 @@ export function ChatMessages({ messages, isLoading, error, knowledgeBaseId, onRe
   if (messages.length === 0 && !isLoading) {
     return (
       <div className="h-full flex items-center justify-center">
-        <div className="text-center max-w-sm px-4">
+        <div className="text-center max-w-md px-4">
           <svg
-            className="w-12 h-12 mx-auto text-gray-400 mb-3"
+            className="w-16 h-16 mx-auto text-blue-400 mb-4"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
+            strokeWidth={1.5}
           >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={1.5}
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
             />
           </svg>
-          <h3 className="text-base font-medium text-gray-900 mb-1">
+          <h3 className="text-lg font-bold text-white mb-2">
             Start a conversation
           </h3>
-          <p className="text-xs text-gray-600">
+          <p className="text-sm text-slate-400 leading-relaxed">
             Ask questions about your uploaded documents. I'll provide answers based on the content you've uploaded.
           </p>
         </div>
@@ -75,14 +75,14 @@ export function ChatMessages({ messages, isLoading, error, knowledgeBaseId, onRe
 
         {/* Loading indicator */}
         {isLoading && messages[messages.length - 1]?.role === 'user' && (
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-medium">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 w-9 h-9 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-semibold text-sm border border-blue-500/30">
               AI
             </div>
-            <div className="flex-1 bg-white rounded-lg p-4 shadow-sm">
-              <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex-1 bg-slate-800 rounded-xl p-5 shadow-lg border border-slate-700">
+              <div className="flex items-center gap-2.5 text-slate-400">
                 <svg
-                  className="animate-spin h-4 w-4"
+                  className="animate-spin h-5 w-5 text-blue-400"
                   viewBox="0 0 24 24"
                   fill="none"
                 >
@@ -100,7 +100,7 @@ export function ChatMessages({ messages, isLoading, error, knowledgeBaseId, onRe
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                <span>Thinking...</span>
+                <span className="font-medium">Thinking...</span>
               </div>
             </div>
           </div>
@@ -108,34 +108,34 @@ export function ChatMessages({ messages, isLoading, error, knowledgeBaseId, onRe
 
         {/* Error message */}
         {error && (
-          <div className="rounded-lg bg-red-50 border border-red-200 p-4">
+          <div className="rounded-xl bg-red-900/20 border border-red-800/50 p-5">
             <div className="flex items-start gap-3">
               <svg
-                className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+                className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                strokeWidth={2}
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
                   d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
               <div className="flex-1">
-                <p className="text-sm font-medium text-red-800 mb-1">
+                <p className="text-sm font-semibold text-red-200 mb-1">
                   Failed to get response
                 </p>
-                <p className="text-sm text-red-700">
+                <p className="text-sm text-red-300 leading-relaxed">
                   {error.message || 'An error occurred while processing your request. Please try again.'}
                 </p>
                 {onRetry && (
                   <button
                     onClick={onRetry}
-                    className="mt-3 text-sm font-medium text-red-700 hover:text-red-900 underline"
+                    className="mt-3 text-sm font-medium text-red-300 hover:text-red-200 hover:underline transition-all"
                   >
-                    Try again
+                    Try again →
                   </button>
                 )}
               </div>

@@ -9,12 +9,12 @@ export function DashboardHeader() {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="font-display text-4xl font-bold text-gray-900 tracking-tight">Dashboard</h1>
+      <div className="flex items-center justify-between mb-12">
+        <h1 className="font-display text-5xl font-extrabold text-white tracking-tight">Dashboard</h1>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowHelp(true)}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-300 bg-slate-800 border border-slate-700 rounded-xl hover:bg-slate-700 hover:text-white hover:-translate-y-0.5 transition-all"
           >
             <svg
               className="w-4 h-4"
@@ -34,7 +34,7 @@ export function DashboardHeader() {
           <Link
             href="/dashboard/usage"
             data-tour="usage-link"
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-slate-300 bg-slate-800 border border-slate-700 rounded-xl hover:bg-slate-700 hover:text-white hover:-translate-y-0.5 transition-all"
           >
             <svg
               className="w-4 h-4"

@@ -243,11 +243,11 @@ export function FileUploadArea({
       <div
         {...getRootProps()}
         className={`
-          border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
-          ${isDragActive && !isDragReject ? 'border-blue-500 bg-blue-50' : ''}
-          ${isDragReject ? 'border-red-500 bg-red-50' : ''}
-          ${!isDragActive && !isDisabled ? 'border-gray-300 hover:border-gray-400' : ''}
-          ${isDisabled ? 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60' : ''}
+          border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors
+          ${isDragActive && !isDragReject ? 'border-blue-400 bg-blue-500/10' : ''}
+          ${isDragReject ? 'border-red-400 bg-red-500/10' : ''}
+          ${!isDragActive && !isDisabled ? 'border-slate-700 hover:border-slate-600 bg-slate-800/50' : ''}
+          ${isDisabled ? 'border-slate-800 bg-slate-900/50 cursor-not-allowed opacity-60' : ''}
         `}
       >
         <input {...getInputProps()} />
@@ -256,7 +256,7 @@ export function FileUploadArea({
           {/* Upload Icon */}
           <div className="flex justify-center">
             <svg
-              className={`w-12 h-12 ${isDragActive ? 'text-blue-500' : 'text-gray-400'}`}
+              className={`w-12 h-12 ${isDragActive ? 'text-blue-400' : 'text-slate-400'}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -273,21 +273,21 @@ export function FileUploadArea({
           {/* Instructions */}
           <div>
             {isDisabled ? (
-              <p className="text-gray-500">
+              <p className="text-slate-400">
                 {currentFileCount >= maxFiles
                   ? 'Maximum file limit reached. Delete files to upload more.'
                   : 'Uploading...'}
               </p>
             ) : (
               <>
-                <p className="text-lg font-medium text-gray-700">
+                <p className="text-lg font-medium text-white">
                   {isDragActive
                     ? isDragReject
                       ? 'Invalid file type'
                       : 'Drop files here'
                     : 'Drag and drop your files here'}
                 </p>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-slate-400 mt-1">
                   or click to browse (PDF, Word, Text, Code files, etc.)
                 </p>
               </>
@@ -296,7 +296,7 @@ export function FileUploadArea({
 
           {/* Restrictions */}
           {!isDisabled && (
-            <div className="text-xs text-gray-500 space-y-1">
+            <div className="text-xs text-slate-400 space-y-1">
               <p>• Supported: PDF, Word (.docx), Text (.txt, .md), JSON, CSV, and code files (.js, .py, .java, etc.)</p>
               <p>• Maximum file size: 10MB</p>
               <p>• Maximum {maxFiles} files per knowledge base</p>
@@ -311,12 +311,12 @@ export function FileUploadArea({
           {Array.from(uploadingFiles.values()).map((file) => (
             <div key={file.name} className="space-y-1">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-700 truncate flex-1">{file.name}</span>
+                <span className="text-white truncate flex-1">{file.name}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-500">{file.progress}%</span>
+                  <span className="text-slate-400">{file.progress}%</span>
                   <button
                     onClick={() => cancelUpload(file.name)}
-                    className="text-red-600 hover:text-red-800 p-1"
+                    className="text-red-400 hover:text-red-300 p-1"
                     title="Cancel upload"
                   >
                     <svg
@@ -335,9 +335,9 @@ export function FileUploadArea({
                   </button>
                 </div>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-slate-700 rounded-full h-2">
                 <div
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  className="bg-blue-500 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${file.progress}%` }}
                 />
               </div>
@@ -348,32 +348,32 @@ export function FileUploadArea({
 
       {/* Error Message */}
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 p-4">
-          <p className="text-sm text-red-800 whitespace-pre-line">{error}</p>
+        <div className="rounded-xl bg-red-900/20 border border-red-800/50 p-4">
+          <p className="text-sm text-red-200 whitespace-pre-line">{error}</p>
         </div>
       )}
 
       {/* Failed Files with Retry */}
       {failedFiles.length > 0 && (
         <div className="space-y-2">
-          <h3 className="text-sm font-medium text-gray-900">Failed Uploads</h3>
+          <h3 className="text-sm font-medium text-white">Failed Uploads</h3>
           {failedFiles.map((failedFile) => (
             <div
               key={failedFile.file.name}
-              className="flex items-center justify-between p-3 border border-red-200 rounded-lg bg-red-50"
+              className="flex items-center justify-between p-3 border border-red-800/50 rounded-xl bg-red-900/20"
             >
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-white truncate">
                   {failedFile.file.name}
                 </p>
-                <p className="text-xs text-red-600 mt-1">{failedFile.error}</p>
+                <p className="text-xs text-red-300 mt-1">{failedFile.error}</p>
               </div>
               <div className="flex items-center gap-2 ml-4">
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => retryUpload(failedFile)}
-                  className="text-blue-600 hover:text-blue-700 border-blue-300"
+                  className="text-blue-400 hover:text-blue-300 border-blue-500/50"
                 >
                   <svg
                     className="w-4 h-4 mr-1"
@@ -392,7 +392,7 @@ export function FileUploadArea({
                 </Button>
                 <button
                   onClick={() => setFailedFiles((prev) => prev.filter((f) => f.file.name !== failedFile.file.name))}
-                  className="text-gray-400 hover:text-gray-600 p-1"
+                  className="text-slate-400 hover:text-slate-300 p-1"
                   title="Remove from list"
                 >
                   <svg
