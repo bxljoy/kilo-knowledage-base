@@ -156,7 +156,7 @@ export async function POST(
           page_count: pageCount,
           gemini_file_id: documentId,  // Store the document ID from FileSearchStore
           status: 'ready',  // File is ready once uploadToFileSearchStore completes
-        })
+        } as any)
         .select()
         .single();
 
