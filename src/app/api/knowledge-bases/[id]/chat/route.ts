@@ -128,7 +128,6 @@ Instructions:
 - Cite specific information from the documents when relevant
 - If asked about topics not in the documents, politely redirect to document-based questions`,
       temperature: 0.7,
-      maxTokens: 2000,
     });
 
     // Increment query count for successful request (both in-memory and database)
