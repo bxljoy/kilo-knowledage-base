@@ -89,7 +89,7 @@ export async function PATCH(
     // Update knowledge base with ownership check
     const { data: knowledgeBase, error } = await supabase
       .from('knowledge_bases')
-      .update(updates)
+      .update(updates as any)
       .eq('id', id)
       .eq('user_id', user.id)
       .select()
