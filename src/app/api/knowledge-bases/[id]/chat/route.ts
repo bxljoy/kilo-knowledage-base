@@ -118,8 +118,8 @@ export async function POST(
     const result = await streamText({
       model: google('gemini-2.5-flash'),
       messages: modelMessages,
-      system: `You are a helpful AI assistant that answers questions based on the uploaded documents in the knowledge base "${kb.name}".
-File Search Store ID: ${kb.gemini_store_id || 'none'}
+      system: `You are a helpful AI assistant that answers questions based on the uploaded documents in the knowledge base "${(kb as any).name}".
+File Search Store ID: ${(kb as any).gemini_store_id || 'none'}
 
 Instructions:
 - Only answer questions based on the content in the uploaded documents
