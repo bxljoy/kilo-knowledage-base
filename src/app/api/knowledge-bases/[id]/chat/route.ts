@@ -116,12 +116,10 @@ export async function POST(
 
     // Stream the response using Vercel AI SDK
     const result = await streamText({
-      model: google('gemini-2.5-flash', {
-        // Use File Search with the knowledge base's FileSearchStore
-        fileSearchStore: kb.gemini_store_id || undefined,
-      }),
+      model: google('gemini-2.0-flash-exp'),
       messages: modelMessages,
       system: `You are a helpful AI assistant that answers questions based on the uploaded documents in the knowledge base "${kb.name}".
+File Search Store ID: ${kb.gemini_store_id || 'none'}
 
 Instructions:
 - Only answer questions based on the content in the uploaded documents
