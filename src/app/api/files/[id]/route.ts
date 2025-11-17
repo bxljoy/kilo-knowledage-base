@@ -41,21 +41,21 @@ export async function DELETE(
     }
 
     // Store file size for usage tracking
-    const fileSize = file.file_size || 0;
+    const fileSize = (file as any).file_size || 0;
 
     // Delete from Gemini first
     try {
       // Remove from FileSearchStore
-      if (file.knowledge_bases.gemini_store_id && file.gemini_file_id) {
+      if ((file as any).knowledge_bases?.gemini_store_id && (file as any).gemini_file_id) {
         await removeFileFromStore(
-          file.knowledge_bases.gemini_store_id,
-          file.gemini_file_id
+          (file as any).knowledge_bases.gemini_store_id,
+          (file as any).gemini_file_id
         );
       }
 
       // Delete the file itself from Gemini
-      if (file.gemini_file_id) {
-        await deleteFileFromGemini(file.gemini_file_id);
+      if ((file as any).gemini_file_id) {
+        await deleteFileFromGemini((file as any).gemini_file_id);
       }
     } catch (geminiError) {
       console.error('Error deleting from Gemini:', geminiError);
