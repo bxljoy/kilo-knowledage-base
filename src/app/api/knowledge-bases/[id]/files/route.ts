@@ -132,7 +132,7 @@ export async function POST(
 
     // Upload file directly to FileSearchStore
     try {
-      if (!kb.gemini_store_id) {
+      if (!(kb as any).gemini_store_id) {
         return NextResponse.json(
           { error: 'Knowledge base does not have a FileSearchStore configured' },
           { status: 500 }
@@ -142,7 +142,7 @@ export async function POST(
       // Upload file directly to the FileSearchStore
       const { documentId, operationName } = await uploadToFileSearchStore(
         file,
-        kb.gemini_store_id,
+        (kb as any).gemini_store_id,
         file.name
       );
 
