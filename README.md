@@ -94,12 +94,54 @@ In your Supabase dashboard:
 
 6. **Configure Google OAuth**
 
-In Google Cloud Console:
-- Go to APIs & Credentials
-- Create OAuth 2.0 Client ID (Web application)
-- Add authorized redirect URIs:
-  - `http://localhost:3000/auth/callback` (development)
-  - `https://your-domain.com/auth/callback` (production)
+This requires setup in both Google Cloud Console AND Supabase Dashboard.
+
+#### Step 1: Google Cloud Console Setup
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Create a new project or select existing one
+3. Enable the **Google+ API** (APIs & Services → Enable APIs)
+4. Go to **APIs & Services → Credentials**
+5. Click **Create Credentials → OAuth 2.0 Client ID**
+6. Select **Web application**
+7. Add **Authorized JavaScript origins**:
+   - `http://localhost:3000` (development)
+   - `https://your-domain.vercel.app` (production)
+8. Add **Authorized redirect URIs**:
+   - `https://your-project-id.supabase.co/auth/v1/callback`
+
+   > ⚠️ **Important**: Use your Supabase callback URL, NOT your app URL!
+
+9. Save and copy the **Client ID** and **Client Secret**
+
+#### Step 2: Supabase Dashboard Setup
+
+1. Go to [Supabase Dashboard](https://supabase.com/dashboard)
+2. Select your project
+3. Navigate to **Authentication → Providers**
+4. Find **Google** and click to expand
+5. Toggle **Enable Google provider** ON
+6. Paste your **Client ID** and **Client Secret** from Google
+7. Save
+
+#### Step 3: Configure Supabase URLs
+
+1. In Supabase Dashboard, go to **Authentication → URL Configuration**
+2. Set **Site URL**:
+   - Development: `http://localhost:3000`
+   - Production: `https://your-domain.vercel.app`
+3. Add **Redirect URLs** (one per line):
+   ```
+   http://localhost:3000/**
+   https://your-domain.vercel.app/**
+   ```
+4. Save changes
+
+#### Troubleshooting Auth Issues
+
+- **"Invalid Refresh Token"**: Clear browser cookies and local storage, then try again
+- **Redirect mismatch**: Ensure URLs match exactly (including trailing slashes)
+- **OAuth error**: Verify Client ID/Secret are correctly copied (no extra spaces)
 
 7. **Run the development server**
 
