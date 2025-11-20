@@ -34,6 +34,34 @@ export async function signInWithGoogle(callbackUrl?: string) {
 }
 
 /**
+ * Sign in with GitHub OAuth
+ * @param callbackUrl - Optional URL to redirect to after authentication
+ */
+export async function signInWithGitHub(callbackUrl?: string) {
+  const supabase = createClient();
+
+  // Build redirect URL with callback parameter for deep linking
+  let redirectTo = `${window.location.origin}/auth/callback`;
+  if (callbackUrl) {
+    redirectTo += `?callbackUrl=${encodeURIComponent(callbackUrl)}`;
+  }
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'github',
+    options: {
+      redirectTo,
+    },
+  });
+
+  if (error) {
+    console.error('Error signing in with GitHub:', error.message);
+    throw error;
+  }
+
+  return data;
+}
+
+/**
  * Sign out
  */
 export async function signOut() {
