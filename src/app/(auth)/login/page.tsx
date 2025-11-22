@@ -111,12 +111,12 @@ function LoginForm() {
   };
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-8 space-y-6">
-      <div className="text-center space-y-3">
-        <h1 className="font-display text-5xl font-bold tracking-tight text-white leading-tight">
-          Welcome to Kilo<br />Knowledge Base
+    <div className="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-4 sm:p-8 space-y-4 sm:space-y-6 w-full max-w-md mx-auto">
+      <div className="text-center space-y-2 sm:space-y-3">
+        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight">
+          Welcome to Kilo<br className="hidden sm:block" /><span className="sm:hidden"> </span>Knowledge Base
         </h1>
-        <p className="text-slate-400 text-lg font-light">
+        <p className="text-slate-400 text-base sm:text-lg font-light px-2">
           Sign in to access your knowledge bases and AI-powered chat
         </p>
       </div>
@@ -155,11 +155,11 @@ function LoginForm() {
         </div>
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-2 sm:space-y-3">
         <Button
           onClick={handleGoogleSignIn}
           disabled={isLoading !== null}
-          className="w-full"
+          className="w-full text-sm sm:text-base"
           size="lg"
         >
           {isLoading === 'google' ? (
@@ -210,7 +210,7 @@ function LoginForm() {
         <Button
           onClick={handleGitHubSignIn}
           disabled={isLoading !== null}
-          className="w-full bg-slate-700 hover:bg-slate-600"
+          className="w-full bg-slate-700 hover:bg-slate-600 text-sm sm:text-base"
           size="lg"
         >
           {isLoading === 'github' ? (

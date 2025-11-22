@@ -60,28 +60,28 @@ export default async function LandingPage() {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-transparent pointer-events-none" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-32 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 md:pt-20 pb-16 sm:pb-24 md:pb-32 relative">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="font-display text-6xl sm:text-7xl font-bold text-white mb-6 leading-tight">
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight px-2">
               Chat with Your
               <span className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
                 {' '}Documents{' '}
               </span>
               Using AI
             </h1>
-            <p className="text-xl text-slate-300 mb-10 leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-slate-300 mb-8 sm:mb-10 leading-relaxed px-4">
               Upload your PDFs and documents, then get instant AI-powered answers from your content.
               Build your personal knowledge base and unlock insights faster than ever.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/login">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
+              <Link href="/login" className="w-full sm:w-auto">
+                <Button size="lg" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg">
                   Get Started Free
                 </Button>
               </Link>
               <a
                 href="#features"
-                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-base font-medium transition-all h-12 px-8 py-6 border border-slate-700 text-white hover:bg-slate-800"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm sm:text-base font-medium transition-all h-12 px-6 sm:px-8 py-5 sm:py-6 border border-slate-700 text-white hover:bg-slate-800"
               >
                 Learn More
               </a>

@@ -243,7 +243,7 @@ export function FileUploadArea({
       <div
         {...getRootProps()}
         className={`
-          border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors
+          border-2 border-dashed rounded-xl p-4 sm:p-6 md:p-8 text-center cursor-pointer transition-colors
           ${isDragActive && !isDragReject ? 'border-blue-400 bg-blue-500/10' : ''}
           ${isDragReject ? 'border-red-400 bg-red-500/10' : ''}
           ${!isDragActive && !isDisabled ? 'border-slate-700 hover:border-slate-600 bg-slate-800/50' : ''}
@@ -252,11 +252,11 @@ export function FileUploadArea({
       >
         <input {...getInputProps()} />
 
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {/* Upload Icon */}
           <div className="flex justify-center">
             <svg
-              className={`w-12 h-12 ${isDragActive ? 'text-blue-400' : 'text-slate-400'}`}
+              className={`w-10 h-10 sm:w-12 sm:h-12 ${isDragActive ? 'text-blue-400' : 'text-slate-400'}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -273,21 +273,21 @@ export function FileUploadArea({
           {/* Instructions */}
           <div>
             {isDisabled ? (
-              <p className="text-slate-400">
+              <p className="text-sm sm:text-base text-slate-400">
                 {currentFileCount >= maxFiles
                   ? 'Maximum file limit reached. Delete files to upload more.'
                   : 'Uploading...'}
               </p>
             ) : (
               <>
-                <p className="text-lg font-medium text-white">
+                <p className="text-base sm:text-lg font-medium text-white">
                   {isDragActive
                     ? isDragReject
                       ? 'Invalid file type'
                       : 'Drop files here'
                     : 'Drag and drop your files here'}
                 </p>
-                <p className="text-sm text-slate-400 mt-1">
+                <p className="text-xs sm:text-sm text-slate-400 mt-1">
                   or click to browse (PDF, Word, Text, Code files, etc.)
                 </p>
               </>
@@ -297,7 +297,8 @@ export function FileUploadArea({
           {/* Restrictions */}
           {!isDisabled && (
             <div className="text-xs text-slate-400 space-y-1">
-              <p>• Supported: PDF, Word (.docx), Text (.txt, .md), JSON, CSV, and code files (.js, .py, .java, etc.)</p>
+              <p className="hidden sm:block">• Supported: PDF, Word (.docx), Text (.txt, .md), JSON, CSV, and code files (.js, .py, .java, etc.)</p>
+              <p className="sm:hidden">• PDF, Word, Text, Code files</p>
               <p>• Maximum file size: 10MB</p>
               <p>• Maximum {maxFiles} files per knowledge base</p>
             </div>

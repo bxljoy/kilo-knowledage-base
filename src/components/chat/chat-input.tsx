@@ -41,14 +41,14 @@ export function ChatInput({
   const canSubmit = safeInput.trim().length > 0 && !isOverLimit && !isLoading;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-3">
       <div className="relative">
         <textarea
           value={safeInput}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="Ask a question about your documents..."
-          className={`w-full px-4 py-3.5 pr-24 bg-slate-800 border rounded-xl resize-none focus:outline-none focus:ring-2 text-slate-100 placeholder:text-slate-500 ${
+          className={`w-full px-3 sm:px-4 py-2.5 sm:py-3.5 pr-16 sm:pr-24 bg-slate-800 border rounded-xl resize-none focus:outline-none focus:ring-2 text-sm sm:text-base text-slate-100 placeholder:text-slate-500 ${
             isOverLimit
               ? 'border-red-500/50 focus:ring-red-500 focus:border-red-500'
               : 'border-slate-700 focus:ring-blue-500 focus:border-blue-500'
@@ -59,7 +59,7 @@ export function ChatInput({
 
         {/* Character Counter */}
         <div
-          className={`absolute bottom-3 right-3 text-xs font-medium ${
+          className={`absolute bottom-2 sm:bottom-3 right-2 sm:right-3 text-xs font-medium ${
             isOverLimit ? 'text-red-400' : 'text-slate-500'
           }`}
         >
@@ -67,16 +67,19 @@ export function ChatInput({
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
-        <p className="text-xs text-slate-400">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
+        <p className="text-xs text-slate-400 hidden sm:block">
           Press <kbd className="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs font-mono text-slate-300">Enter</kbd> to send,{' '}
           <kbd className="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs font-mono text-slate-300">Shift + Enter</kbd> for new line
+        </p>
+        <p className="text-xs text-slate-400 sm:hidden">
+          <kbd className="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs font-mono">Enter</kbd> = send • <kbd className="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs font-mono">Shift+Enter</kbd> = new line
         </p>
 
         <Button
           type="submit"
           disabled={!canSubmit}
-          className="min-w-32 rounded-xl"
+          className="w-full sm:w-auto sm:min-w-32 rounded-xl text-sm sm:text-base"
         >
           {isLoading ? (
             <span className="flex items-center gap-2">

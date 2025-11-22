@@ -34,7 +34,7 @@ export default async function DashboardPage() {
   }));
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       <div className="max-w-7xl mx-auto">
         <DashboardHeader />
         <KnowledgeBaseGrid initialKnowledgeBases={kbsWithFileCount} userId={user.id} />

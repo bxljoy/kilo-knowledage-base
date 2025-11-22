@@ -43,13 +43,13 @@ export default async function ChatPage({ params }: ChatPageProps) {
     <div className="h-[calc(100vh-4rem)] flex flex-col">
       {/* Header */}
       <div className="border-b border-slate-800 bg-slate-900/95 backdrop-blur flex-shrink-0">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
               <Link href={`/dashboard/knowledge-bases/${id}`}>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="px-2 sm:px-3">
                   <svg
-                    className="w-4 h-4 mr-2"
+                    className="w-4 h-4 sm:mr-2"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -61,12 +61,12 @@ export default async function ChatPage({ params }: ChatPageProps) {
                       d="M10 19l-7-7m0 0l7-7m-7 7h18"
                     />
                   </svg>
-                  Back
+                  <span className="hidden sm:inline">Back</span>
                 </Button>
               </Link>
-              <div>
-                <h1 className="text-xl font-bold text-white">{(knowledgeBase as any).name}</h1>
-                <p className="text-sm text-slate-400">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-base sm:text-xl font-bold text-white truncate">{(knowledgeBase as any).name}</h1>
+                <p className="text-xs sm:text-sm text-slate-400">
                   {fileCount} file{fileCount !== 1 ? 's' : ''} • Chat
                 </p>
               </div>

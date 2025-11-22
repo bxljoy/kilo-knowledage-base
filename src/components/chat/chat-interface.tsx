@@ -76,7 +76,7 @@ export function ChatInterface({
 
       {/* Input Area */}
       <div className="border-t border-slate-800 bg-slate-900/95 backdrop-blur">
-        <div className="container mx-auto px-4 py-4 max-w-3xl">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 max-w-3xl">
           <ChatInput
             input={input}
             handleInputChange={handleInputChange}

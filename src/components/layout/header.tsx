@@ -6,16 +6,27 @@ import { UserMenu } from './user-menu';
 export function Header() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-900/95 backdrop-blur supports-[backdrop-filter]:bg-slate-900/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-6">
+      <div className="container mx-auto flex h-16 items-center justify-between px-3 sm:px-6">
         <Link href="/dashboard" className="flex items-center space-x-2 group">
-          <span className="font-display text-2xl font-extrabold text-white tracking-tight group-hover:text-blue-400 transition-colors">Kilo Knowledge Base</span>
+          {/* Logo - always visible */}
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+            <span className="text-white font-bold text-lg">K</span>
+          </div>
+          {/* Full text - hidden on mobile */}
+          <span className="hidden sm:block font-display text-2xl font-extrabold text-white tracking-tight group-hover:text-blue-400 transition-colors">
+            Kilo Knowledge Base
+          </span>
+          {/* Short text - visible on mobile only */}
+          <span className="sm:hidden font-display text-lg font-extrabold text-white tracking-tight group-hover:text-blue-400 transition-colors">
+            Kilo KB
+          </span>
         </Link>
-        <nav className="flex items-center space-x-4">
+        <nav className="flex items-center space-x-2 sm:space-x-4">
           <a
             href="https://github.com/bxljoy/kilo-knowledage-base"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center w-10 h-10 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
             aria-label="GitHub Repository"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
