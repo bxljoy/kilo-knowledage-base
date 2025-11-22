@@ -9,6 +9,7 @@ function LoginForm() {
   const [isLoading, setIsLoading] = useState<'google' | 'github' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showMobileWarning, setShowMobileWarning] = useState(false);
+  const [urlCopied, setUrlCopied] = useState(false);
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
 
@@ -146,11 +147,30 @@ function LoginForm() {
           <button
             onClick={() => {
               navigator.clipboard.writeText(window.location.href);
-              alert('URL copied! Now paste it in Safari or Chrome.');
+              setUrlCopied(true);
+              setTimeout(() => setUrlCopied(false), 3000);
             }}
-            className="w-full mt-2 px-4 py-2 bg-yellow-500/20 hover:bg-yellow-500/30 rounded-lg text-sm font-medium transition-colors"
+            className={`w-full mt-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              urlCopied
+                ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                : 'bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400'
+            }`}
           >
-            Copy Page URL
+            {urlCopied ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Copied!
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                Copy Page URL
+              </span>
+            )}
           </button>
         </div>
       )}
