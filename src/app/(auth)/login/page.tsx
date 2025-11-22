@@ -8,13 +8,54 @@ import { Button } from '@/components/ui/button';
 function LoginForm() {
   const [isLoading, setIsLoading] = useState<'google' | 'github' | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showMobileWarning, setShowMobileWarning] = useState(false);
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
+
+  // Detect if user is in a WebView (in-app browser) which Google blocks
+  const isInAppBrowser = () => {
+    if (typeof window === 'undefined') return false;
+
+    const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+    const ua = userAgent.toLowerCase();
+
+    // Detect common in-app browsers that cause OAuth issues
+    const inAppBrowserPatterns = [
+      'fban',        // Facebook App
+      'fbav',        // Facebook App
+      'instagram',   // Instagram App
+      'twitter',     // Twitter App
+      'line',        // Line App
+      'wechat',      // WeChat
+      'micromessenger', // WeChat alternative name
+      'snapchat',    // Snapchat
+      'tiktok',      // TikTok
+      'linkedin',    // LinkedIn App
+    ];
+
+    // Check if user agent matches any in-app browser pattern
+    const isInApp = inAppBrowserPatterns.some(pattern => ua.includes(pattern));
+
+    // Also check if it's a WebView on iOS or Android
+    const isIosWebView = /(iphone|ipod|ipad).*applewebkit(?!.*safari)/i.test(ua);
+    const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome'));
+
+    return isInApp || isIosWebView || isAndroidWebView;
+  };
 
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading('google');
       setError(null);
+      setShowMobileWarning(false);
+
+      // Show warning for in-app browser users before attempting sign-in
+      if (isInAppBrowser()) {
+        setShowMobileWarning(true);
+        setIsLoading(null);
+        return;
+      }
+
       await signInWithGoogle(callbackUrl || undefined);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to sign in');
@@ -26,9 +67,45 @@ function LoginForm() {
     try {
       setIsLoading('github');
       setError(null);
+      setShowMobileWarning(false);
+
+      // Show warning for in-app browser users before attempting sign-in
+      if (isInAppBrowser()) {
+        setShowMobileWarning(true);
+        setIsLoading(null);
+        return;
+      }
+
       await signInWithGitHub(callbackUrl || undefined);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to sign in');
+      setIsLoading(null);
+    }
+  };
+
+  const handleMobileContinue = async (provider: 'google' | 'github') => {
+    try {
+      setIsLoading(provider);
+      setError(null);
+      setShowMobileWarning(false);
+
+      if (provider === 'google') {
+        await signInWithGoogle(callbackUrl || undefined);
+      } else {
+        await signInWithGitHub(callbackUrl || undefined);
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to sign in';
+
+      // Provide more helpful error message for mobile OAuth errors
+      if (errorMessage.includes('403') || errorMessage.includes('disallowed')) {
+        setError(
+          'OAuth sign-in is blocked on mobile browsers. Please open this page in your device\'s default browser (Safari for iOS, Chrome for Android) instead of an in-app browser.'
+        );
+      } else {
+        setError(errorMessage);
+      }
+
       setIsLoading(null);
     }
   };
@@ -45,8 +122,36 @@ function LoginForm() {
       </div>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl p-3 text-sm">
+        <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl p-4 text-sm">
+          <div className="font-semibold mb-1">Sign-in Error</div>
           {error}
+        </div>
+      )}
+
+      {showMobileWarning && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 rounded-xl p-4 space-y-3">
+          <div className="font-semibold">In-App Browser Detected</div>
+          <p className="text-sm">
+            You're viewing this page in an in-app browser (Instagram, Facebook, Twitter, etc.).
+            Google and GitHub block OAuth sign-in in these browsers for security reasons.
+          </p>
+          <p className="text-sm font-medium">
+            To sign in:
+          </p>
+          <ol className="text-sm space-y-1 ml-4 list-decimal">
+            <li>Tap the button below to copy this page's URL</li>
+            <li>Open your device's browser (Safari on iOS, Chrome on Android)</li>
+            <li>Paste the URL and sign in there</li>
+          </ol>
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              alert('URL copied! Now paste it in Safari or Chrome.');
+            }}
+            className="w-full mt-2 px-4 py-2 bg-yellow-500/20 hover:bg-yellow-500/30 rounded-lg text-sm font-medium transition-colors"
+          >
+            Copy Page URL
+          </button>
         </div>
       )}
 

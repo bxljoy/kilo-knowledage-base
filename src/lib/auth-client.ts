@@ -6,6 +6,20 @@
 import { createClient } from './supabase/client';
 
 /**
+ * Detect if we're in a mobile browser that might use WebView
+ */
+function isMobileBrowser() {
+  if (typeof window === 'undefined') return false;
+
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+
+  // Check for mobile devices
+  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+    userAgent.toLowerCase()
+  );
+}
+
+/**
  * Sign in with Google OAuth
  * @param callbackUrl - Optional URL to redirect to after authentication
  */
@@ -22,6 +36,10 @@ export async function signInWithGoogle(callbackUrl?: string) {
     provider: 'google',
     options: {
       redirectTo,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
+      },
     },
   });
 
