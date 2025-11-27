@@ -1,5 +1,11 @@
-# Claude Code Instructions
+# Project Context for Claude Code
 
-## Task Master AI Instructions
-**Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
-@./.taskmaster/CLAUDE.md
+**Project:** kilo-knowledage-base
+**Type:** typescript
+**Structure:** Single repository
+
+## Guidelines
+
+- Follow existing code style and conventions
+- Update tests when modifying functionality
+- Keep changes focused and atomic
